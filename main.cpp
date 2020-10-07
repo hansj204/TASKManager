@@ -1,5 +1,9 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <string.h>
+#include<fstream>
+#include <cstring>
+#include "user.h"
 using namespace std;
 
 int taskLength;
@@ -72,8 +76,7 @@ void updateTask(TASK project[]) {
 		if (task.endDate != ".") project[selectNo - 1].endDate = task.endDate;
 		if (task.progress != -1) project[selectNo - 1].progress = task.progress;
 		if (task.finishDate != ".") project[selectNo - 1].finishDate = task.finishDate;
-	}
-	else {
+	} else {
 		cout << "수정할 TASK의 No와 진행률을 입력해주세요 :";
 		cin >> selectNo >> progress;
 
@@ -85,19 +88,6 @@ void updateTask(TASK project[]) {
 
 void sortTask(TASK project[]) {
 	//sort(project, project + 2);
-}
-
-void searchTask(TASK project[]) {
-	int searchNo;
-	string searchData;
-	
-	cout << "=====================================================" << endl;
-	cout << "1.No.\t2.TASK명\t3.시작일\t 4.마감일\t5.진행률\t6.완료일" << endl;
-	cout << "=====================================================" << endl;
-	cout << "검색할 항목의 No와 검색어를 입력하세요 : ";
-	cin >> searchNo >> searchData;
-
-	binarySearch(project, 0, 1, searchNo, searchData);
 }
 
 int binarySearch(TASK arr[], int l, int r, int searchNo, string searchData) { // 매개변수 : 배열이름, 배열 시작 인덱스, 배열 끝 인덱스, 찾으려는 값
@@ -139,16 +129,49 @@ int binarySearch(TASK arr[], int l, int r, int searchNo, string searchData) { //
 
 }
 
+void searchTask(TASK project[]) {
+	int searchNo;
+	string searchData;
+
+	cout << "=====================================================" << endl;
+	cout << "1.No.\t2.TASK명\t3.시작일\t 4.마감일\t5.진행률\t6.완료일" << endl;
+	cout << "=====================================================" << endl;
+	cout << "검색할 항목의 No와 검색어를 입력하세요 : ";
+	cin >> searchNo >> searchData;
+
+	binarySearch(project, 0, 1, searchNo, searchData);
+}
 
 int main() {
 	TASK task[] = { {"a", "2020-10-10", "2020-10-20", 0, "-"}, {"b", "2020-11-11", "2020-12-31", 0, "-"} };
-	int selectWork;
-	string projectName;
-
+	int selectUser, selectProject, selectWork;
+	
 	cout << "TASKManager" << endl;
+	cout << "--------------------------------------" << endl;
+	cout << "환영합니다. 새로운 회원이라면 0, 기존 회원이라면 1를 입력하여 주세요 :";
+	cin >> selectUser;
 
-	cout << "프로젝트 명을 입력해주세요: ";
-	cin >> projectName;
+	login(selectUser);
+
+	cout << "회원님 안녕하세요" << endl;
+	cout << "기존 프로젝트 불러오기(참여)를 원하면 0, 새로운 프로젝트 생성을 원하면 1를 입력하여 주세요 :";
+	cin >> selectProject;
+
+	if (selectProject == 0) {
+
+	}
+	else {
+		string projectName;
+		cout << "프로젝트 명을 입력해주세요: ";
+		cin >> projectName;
+	}
+
+	cout << "-----프로젝트 참여자---------------------------------------------------" << endl;
+
+
+
+	//프로젝트 TASK 조회 어쩌구 저쩌구
+
 
 	while(1) {
 		
