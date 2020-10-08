@@ -1,3 +1,9 @@
-void login(int selectUser);
-void newUser();
-bool checkUser(char* user);
+#include <string>
+using namespace std;
+
+typedef struct{
+	string id;
+	string position;
+}User;
+
+User login(int selectUser);
