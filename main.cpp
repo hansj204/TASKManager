@@ -6,7 +6,37 @@
 #include "user.h"
 #include "taskManagementWork.h"
 #include "projectManagementWork.h"
+#include <locale.h>
 using namespace std;
+
+void taskWork() {
+	int selectWork;
+
+	while (1) {
+		cout << "=====================================================" << endl;
+		cout << "1.TASK 추가\t2.TASK 수정\t3.TASK 정렬" << endl;
+		cout << "=====================================================" << endl;
+		cin >> selectWork;
+
+		if (selectWork == -1) break;
+
+		switch (selectWork) {
+
+		case 1:
+			addTask(task, (sizeof(task) / sizeof(TASK) - 1));
+			break;
+		case 2:
+			updateTask(task);
+			break;
+		case 3:
+			sortTask(task);
+			break;
+		default:
+			break;
+		}
+	
+	}
+}
 
 int main() {
 	//TASK task[] = { {"a", "2020-10-10", "2020-10-20", 0, "-"}, {"b", "2020-11-11", "2020-12-31", 0, "-"} };
@@ -32,7 +62,7 @@ int main() {
 
 		switch (selectProject) {
 			case 1:
-				loadProjectList(userInfo.id);
+				selectTaskList(loadProjectList(userInfo.id));
 				break;
 			case 2:
 				break;
@@ -51,7 +81,7 @@ int main() {
 
 		switch (selectProject) {
 			case 1:
-				loadProjectList(userInfo.id);
+				selectTaskList(loadProjectList(userInfo.id));
 				break;
 			case 2:
 				applyProjectParticipation(userInfo.id);
@@ -59,7 +89,7 @@ int main() {
 		}
 	}
 	
-	cout << "-----프로젝트 참여자---------------------------------------------------" << endl;
+	//cout << "-----프로젝트 참여자---------------------------------------------------" << endl;
 
 	//프로젝트 TASK 조회 어쩌구 저쩌구
 
@@ -68,31 +98,7 @@ int main() {
 	//	
 	//	//taskLength = sizeof(task) / sizeof(TASK);
 
-	//	cout << "=====================================================" << endl;
-	//	cout << "1.TASK 추가\t2.TASK 수정\t3.TASK 정렬" << endl;
-	//	cout << "=====================================================" << endl;
-	//	cin >> selectWork;
-
-	//	if (selectWork == -1) break;
-
-	//	switch (selectWork) {
-
-	//	case 1:
-	//		addTask(task, (sizeof(task) / sizeof(TASK) - 1));
-	//		break;
-	//	case 2:
-	//		updateTask(task);
-	//		break;
-	//	case 3:
-	//		sortTask(task);
-	//		break;
-	//	default:
-	//		break;
-	//	}
-
-	//	selectTaskList(task);
-
-	//}
+	//	
 
 	return 0;
 }

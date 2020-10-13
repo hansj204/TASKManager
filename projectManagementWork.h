@@ -1,7 +1,7 @@
 #include <string>
 using namespace std;
 
-void loadProjectList(string userId);
+string loadProjectList(string userId);
 
 void projectUser(char projectName[]);
 

@@ -4,12 +4,13 @@
 #include<fstream>
 #include <cstring>
 #include "projectManagementWork.h"
+#include <locale.h>
 using namespace std;
 
-void loadProjectList(string userId) {
+string loadProjectList(string userId) {
 
 	string projectList[50];
-	int i = 0;
+	int i = 0, selectProject;
 	
 	ifstream readFile;
 	readFile.open("projectList.txt");
@@ -36,6 +37,11 @@ void loadProjectList(string userId) {
 		cout << j+1 << "." << projectList[j] << endl;
 	}
 	cout << "------------------------------------------------------------" << endl;
+	
+	cout << ">>";
+	cin >> selectProject;
+
+	return projectList[selectProject - 1] + ".txt";
 }
 
 void projectUser(char  projectName[]) {
@@ -62,6 +68,7 @@ void projectUser(char  projectName[]) {
 void inviteTeamPlayer(string userId) {
 	
 	string writeProjectName;
+
 	cout << "참여할 프로젝트명을 입력해주세요 : ";
 	cin >> writeProjectName;
 

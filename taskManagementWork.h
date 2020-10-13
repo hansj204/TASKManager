@@ -9,7 +9,7 @@ struct TASK{
 	string finishDate;
 };
 
-void selectTaskList(TASK task[]);
+void selectTaskList(string fileName);
 
 void addTask(TASK* project, int taskLength);
 

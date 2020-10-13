@@ -4,19 +4,85 @@
 #include<fstream>
 #include <cstring>
 #include "taskManagementWork.h"
+#include <locale.h>
+#include <stdlib.h>
+#include <iomanip>
+
 using namespace std;
 
-void selectTaskList(TASK task[]) {
-	cout << "=====================================================" << endl;
-	cout << "No.\tTASK명\t시작일\t마감일\t진행률\t완료일" << endl;
-	cout << "=====================================================" << endl;
-	for (int i = 0; i < 2; i++) {
-		cout << i + 1 << "\t" << task[i].taskname << "\t" << task[i].startDate << "\t" << task[i].endDate << "\t" << task[i].progress << "%\t" << task[i].finishDate << endl;
+void selectTaskList(string fileName) {
+	TASK task;
+
+	setlocale(LC_ALL, "ko-KR");
+
+	cout << fileName << endl;
+
+	string projectList[50];
+	int i = 0, selectProject;
+
+	ifstream readFile;
+	readFile.open(fileName);
+
+	if (readFile.is_open()) {
+
+		while (!readFile.eof()) {
+			char tmp[256];
+			readFile.getline(tmp, 256);
+
+			string orginData = tmp;
+
+			char* token = strtok(tmp, " ");
+
+			while (token != NULL){
+				if(i == 0)		 task.taskname = token;
+				else if (i == 1) task.startDate = token;
+				else if (i == 2) task.endDate = token;
+				else if (i == 3) task.progress = atoi(token);
+				else if (i == 4) task.finishDate = token;
+				token = strtok(NULL, " ");
+				i++;
+			}
+
+		}
+
+		readFile.close();
 	}
-	cout << "=====================================================\n" << endl;
+
+	cout << "=======================================================================" << endl;
+	cout << left << setw(5) << "No." << setw(15) << "TASK명" << setw(15) << "시작일" << setw(15) << "마감일" << setw(10) << "진행률" << setw(10) << "완료일" << endl;
+	cout << "=======================================================================" << endl;
+	for (int i = 0; i < 1; i++) {
+		cout << left << setw(5) << i + 1 << setw(15) << task.taskname << setw(15) << task.startDate << setw(15) << task.endDate << setw(10) << to_string(task.progress) + "%" <<  setw(10) << task.finishDate << endl;
+	}
+	cout << "=======================================================================\n" << endl;
+
+	int selectWork;
+
+	while (1) {
+		cout << "=====================================================" << endl;
+		cout << "1.TASK 추가\t2.TASK 수정\t3.TASK 정렬" << endl;
+		cout << "=====================================================" << endl;
+		cin >> selectWork;
+
+		if (selectWork == -1) break;
+
+		switch (selectWork) {
+
+		case 1:
+			addTask(task);
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		default:
+			break;
+		}
+
+	}
 }
 
-void addTask(TASK* project, int taskLength) {
+void addTask(TASK project) {
 	TASK task;
 
 	cout << "TASK 명을 입력하세요 : ";
@@ -30,7 +96,7 @@ void addTask(TASK* project, int taskLength) {
 	task.finishDate = '-';
 
 	//project[sizeof(project) - 1] = task;
-	system("cls");
+	//system("cls");
 	cout << taskLength << endl;
 
 	//cout << task.taskname << "\t" << task.startDate << "\t" << task.endDate << "\t" << task.finishDate;
@@ -39,7 +105,7 @@ void addTask(TASK* project, int taskLength) {
 void updateTask(TASK project[]) {
 
 	int selectUpdate, selectNo, progress;
-	selectTaskList(project);
+	//selectTaskList(project);
 
 	cout << "1. TASK 수정\t2. TASK 진행률 업데이트" << endl;
 	cin >> selectUpdate;

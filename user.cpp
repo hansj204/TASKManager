@@ -7,8 +7,7 @@
 using namespace std;
 
 void newUser() {
-	char newUserId[30] = "", newUserPw[30] = "", newUserPos[5] = "";
-	
+	string newUser, newUserId, newUserPw, newUserPos;
 	ofstream writeFile;
 	writeFile.open("user.txt", ios::app);
 	
@@ -19,18 +18,13 @@ void newUser() {
 	cout << "팀장은 tl, 팀원은 tp를 입력해주세요";
 	cin >> newUserPos;
 
-	strcat(newUserId, "-");
-	strcat(newUserId, newUserPw);
-	strcat(newUserId, " ");
-	strcat(newUserId, newUserPos);
-	strcat(newUserId, "\n");
+	newUser = newUserId + "-" + newUserPw + " " + newUserPos;
 
-	string newUser = newUserId;
 	writeFile.write(newUser.c_str(), newUser.size());
 	writeFile.close();
 }
 
-string checkUser(char* user) {
+string checkUser(string user) {
 	ifstream readFile;
 	readFile.open("user.txt"); 
 
@@ -41,19 +35,15 @@ string checkUser(char* user) {
 
 			string orginData = tmp;
 
-			char* check = strtok(tmp, " ");
-
-			cout << "check : " << check << endl;
-
-			if (strcmp(check, user) == 0) { return orginData; }//지금은 읽은 문자열 바로 출력.
+			if (user.compare(strtok(tmp, " ")) == 0) { return orginData; }
 		}
-		readFile.close();    //파일 닫아줍니다.
+		readFile.close();
 	}
 
 	return "";
 }
 User login(int selectUser) {
-	char userId[50] = "", userPw[50] = "";
+	string user, userId, userPw;
 	
 	if (selectUser == 0) newUser();
 
@@ -63,10 +53,9 @@ User login(int selectUser) {
 	cout << "비밀번호: ";
 	cin >> userPw;
 
-	strcat(userId, "-");
-	strcat(userId, userPw);
+	user += userId + "-" + userPw;
 	
-	string checkResult = checkUser(userId);
+	string checkResult = checkUser(user);
 
 	while (checkResult.c_str() == "") {
 		cout << "아이디나 비밀번호가 틀렸습니다. 다시 입력해주세요." << endl;
@@ -75,19 +64,17 @@ User login(int selectUser) {
 		cout << "비밀번호: ";
 		cin >> userPw;
 
-		strcat(userId, "-");
-		strcat(userId, userPw);
+		user += userId + "-" + userPw;
 	}
 
 	char* check = new char[checkResult.size()];
 	strncpy(check, checkResult.c_str(), sizeof(check));
 
-	User user;
-	user.position = checkResult.substr(checkResult.size() - 2, 2);
-	user.id = strtok(check, "-");
+	User member;
+	member.position = checkResult.substr(checkResult.size() - 2, 2);
+	member.id = strtok(check, "-");
 	
-
-	return user;
+	return member;
 }
 
 //cout << tempUser << endl;
