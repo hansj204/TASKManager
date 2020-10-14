@@ -11,54 +11,53 @@
 using namespace std;
 
 void selectTaskList(string fileName) {
-	TASK task;
+	while (1) {
 
-	setlocale(LC_ALL, "ko-KR");
+		TASK *projectTask = new TASK[100];
+		int i = 0, taskCount = 0, selectProject;
 
-	cout << fileName << endl;
+		setlocale(LC_ALL, "ko-KR");
 
-	string projectList[50];
-	int i = 0, selectProject;
+		ifstream readFile;
+		readFile.open(fileName);
 
-	ifstream readFile;
-	readFile.open(fileName);
+		if (readFile.is_open()) {
 
-	if (readFile.is_open()) {
+			while (!readFile.eof()) {
+				char tmp[256];
+				i = 0;
 
-		while (!readFile.eof()) {
-			char tmp[256];
-			readFile.getline(tmp, 256);
+				readFile.getline(tmp, 256);
+				string orginData = tmp;
 
-			string orginData = tmp;
+				char* token = strtok(tmp, " ");
 
-			char* token = strtok(tmp, " ");
+				while (token != NULL){
+					if(i == 0)		 projectTask[taskCount].taskname = token;
+					else if (i == 1) projectTask[taskCount].startDate = token;
+					else if (i == 2) projectTask[taskCount].endDate = token;
+					else if (i == 3) projectTask[taskCount].progress = atoi(token);
+					else if (i == 4) projectTask[taskCount].finishDate = token;
+					token = strtok(NULL, " ");
+					i++;
+				}
 
-			while (token != NULL){
-				if(i == 0)		 task.taskname = token;
-				else if (i == 1) task.startDate = token;
-				else if (i == 2) task.endDate = token;
-				else if (i == 3) task.progress = atoi(token);
-				else if (i == 4) task.finishDate = token;
-				token = strtok(NULL, " ");
-				i++;
+				taskCount++;
 			}
 
+			readFile.close();
 		}
 
-		readFile.close();
-	}
+		cout << "=======================================================================" << endl;
+		cout << left << setw(5) << "No." << setw(15) << "TASK명" << setw(15) << "시작일" << setw(15) << "마감일" << setw(10) << "진행률" << setw(10) << "완료일" << endl;
+		cout << "=======================================================================" << endl;
+		for (int i = 0; i < taskCount - 1; i++) {
+			cout << left << setw(5) << i + 1 << setw(15) << projectTask[i].taskname << setw(15) << projectTask[i].startDate << setw(15) << projectTask[i].endDate << setw(10) << to_string(projectTask[i].progress) + "%" <<  setw(10) << projectTask[i].finishDate << endl;
+		}
+		cout << "=======================================================================\n" << endl;
 
-	cout << "=======================================================================" << endl;
-	cout << left << setw(5) << "No." << setw(15) << "TASK명" << setw(15) << "시작일" << setw(15) << "마감일" << setw(10) << "진행률" << setw(10) << "완료일" << endl;
-	cout << "=======================================================================" << endl;
-	for (int i = 0; i < 1; i++) {
-		cout << left << setw(5) << i + 1 << setw(15) << task.taskname << setw(15) << task.startDate << setw(15) << task.endDate << setw(10) << to_string(task.progress) + "%" <<  setw(10) << task.finishDate << endl;
-	}
-	cout << "=======================================================================\n" << endl;
+		int selectWork;
 
-	int selectWork;
-
-	while (1) {
 		cout << "=====================================================" << endl;
 		cout << "1.TASK 추가\t2.TASK 수정\t3.TASK 정렬" << endl;
 		cout << "=====================================================" << endl;
@@ -69,11 +68,12 @@ void selectTaskList(string fileName) {
 		switch (selectWork) {
 
 		case 1:
-			addTask(task);
+			addTask(fileName);
 			break;
 		case 2:
 			break;
 		case 3:
+			updateTask(projectTask);
 			break;
 		default:
 			break;
@@ -82,7 +82,10 @@ void selectTaskList(string fileName) {
 	}
 }
 
-void addTask(TASK project) {
+void addTask(string projectFileName) {
+	ofstream writeFile;
+	writeFile.open(projectFileName, ios::app);
+
 	TASK task;
 
 	cout << "TASK 명을 입력하세요 : ";
@@ -95,18 +98,16 @@ void addTask(TASK project) {
 	task.progress = 0;
 	task.finishDate = '-';
 
-	//project[sizeof(project) - 1] = task;
-	//system("cls");
-	cout << taskLength << endl;
+	string addTaskInfo = task.taskname + " " + task.startDate + " " + task.endDate + " " + to_string(task.progress) + " " + task.finishDate + "\n";
 
-	//cout << task.taskname << "\t" << task.startDate << "\t" << task.endDate << "\t" << task.finishDate;
+	writeFile.write(addTaskInfo.c_str(), addTaskInfo.size());
+	writeFile.close();
 }
 
 void updateTask(TASK project[]) {
 
 	int selectUpdate, selectNo, progress;
-	//selectTaskList(project);
-
+	
 	cout << "1. TASK 수정\t2. TASK 진행률 업데이트" << endl;
 	cin >> selectUpdate;
 

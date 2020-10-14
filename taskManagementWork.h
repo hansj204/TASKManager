@@ -11,7 +11,7 @@ struct TASK{
 
 void selectTaskList(string fileName);
 
-void addTask(TASK* project, int taskLength);
+void addTask(string projectFileName);
 
 void updateTask(TASK project[]);
 

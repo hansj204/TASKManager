@@ -73,6 +73,8 @@ User login(int selectUser) {
 	User member;
 	member.position = checkResult.substr(checkResult.size() - 2, 2);
 	member.id = strtok(check, "-");
+
+	delete check;
 	
 	return member;
 }

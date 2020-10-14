@@ -2,14 +2,13 @@
 #include <iostream>
 #include <string.h>
 #include<fstream>
-#include <cstring>
 #include "user.h"
 #include "taskManagementWork.h"
 #include "projectManagementWork.h"
 #include <locale.h>
 using namespace std;
 
-void taskWork() {
+/*void taskWork() {
 	int selectWork;
 
 	while (1) {
@@ -36,7 +35,7 @@ void taskWork() {
 		}
 	
 	}
-}
+}*/
 
 int main() {
 	//TASK task[] = { {"a", "2020-10-10", "2020-10-20", 0, "-"}, {"b", "2020-11-11", "2020-12-31", 0, "-"} };
