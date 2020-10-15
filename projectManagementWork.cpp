@@ -99,8 +99,34 @@ void applyProjectParticipation(string userId) {
 
 }
 
-void createdNewProject() {
-	char projectName[256] = "";
+void createNewProject() {
+	string projectName;
 	cout << "프로젝트 명을 입력해주세요: ";
 	cin >> projectName;
+
+	projectName = projectName + ".txt";
+
+	ofstream writeFile;
+	writeFile.open(projectName + ".txt");
+	writeFile.close();
+
+	fstream readFile;
+	readFile.open("projectList.txt");
+
+	if (readFile.is_open()) {
+
+		while (!readFile.eof()) {
+			char tmp[256];
+			readFile.getline(tmp, 256);
+
+			string orginData = tmp;
+
+			if (orginData.find(writeProjectName) >= 0) {
+				strcpy(tmp, ",");
+				strcpy(tmp, userId.c_str());
+				readFile.write(tmp, sizeof(tmp));
+			}
+		}
+		readFile.close();
+	}
 }

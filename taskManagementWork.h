@@ -13,7 +13,7 @@ void selectTaskList(string fileName);
 
 void addTask(string projectFileName);
 
-void updateTask(TASK project[]);
+void updateTask(string projectFileName, TASK project[], int taskRowCnt);
 
 void sortTask(TASK project[]);
 

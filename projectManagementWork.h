@@ -8,3 +8,5 @@ void projectUser(char projectName[]);
 void inviteTeamPlayer(string userId);
 
 void applyProjectParticipation (string userId);
+
+void createNewProject();

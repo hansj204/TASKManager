@@ -71,10 +71,10 @@ void selectTaskList(string fileName) {
 			addTask(fileName);
 			break;
 		case 2:
+			updateTask(fileName, projectTask, taskCount - 1);
 			break;
 		case 3:
-			updateTask(projectTask);
-			break;
+						break;
 		default:
 			break;
 		}
@@ -104,7 +104,7 @@ void addTask(string projectFileName) {
 	writeFile.close();
 }
 
-void updateTask(TASK project[]) {
+void updateTask(string projectFileName, TASK project[], int taskRowCnt) {
 
 	int selectUpdate, selectNo, progress;
 	
@@ -141,7 +141,16 @@ void updateTask(TASK project[]) {
 		project[selectNo - 1].progress = progress;
 	}
 
-	system("cls");
+	ofstream writeFile;
+	writeFile.open(projectFileName);
+
+	for (int i = 0; i < taskRowCnt; i++) {
+		string udpdateTaskInfo = project[i].taskname + " " + project[i].startDate + " " + project[i].endDate + " " + to_string(project[i].progress) + " " + project[i].finishDate + "\n";
+		writeFile.write(udpdateTaskInfo.c_str(), udpdateTaskInfo.size());
+	}
+
+	writeFile.close();
+
 }
 
 void sortTask(TASK project[]) {
