@@ -5,11 +5,12 @@
 #include <cstring>
 #include "projectManagementWork.h"
 #include <locale.h>
+#include<io.h>
 using namespace std;
 
 string loadProjectList(string userId) {
 
-	string projectList[50];
+	string projectList[10];
 	int i = 0, selectProject;
 	
 	ifstream readFile;
@@ -21,10 +22,13 @@ string loadProjectList(string userId) {
 			char tmp[256];
 			readFile.getline(tmp, 256);
 
-			string orginData = tmp;
+			if (tmp == "") break;
+			string originData = tmp;
 
-			if (orginData.find(userId) >= 0) {
+			if (originData.find(userId) >= 0) {
 				projectList[i] = strtok(tmp, "-");
+				cout << projectList[i] << endl;
+				cout << i << endl;
 				i++;
 			}
 		}
@@ -104,35 +108,14 @@ void createNewProject(string userId) {
 	cout << "프로젝트 명을 입력해주세요: ";
 	cin >> projectName;
 
-	fstream readFile;
-	readFile.open(projectName + ".txt");
-	readFile.close();
-
 	ofstream writeFile;
-	writeFile.open("projectList.txt", ios::app);
+	writeFile.open(projectName + ".txt");
+	writeFile.close();
 
-	string addProject = projectName + "-" + userId + "\n";
+	writeFile.open("projectList.txt", ios::app);
+	
+	string addProject = (_access("projectList.txt", 0) == 0)? "\n" + projectName + "-" + userId : projectName + "-" + userId;
 
 	writeFile.write(addProject.c_str(), addProject.size());
 	writeFile.close();
-
-	/*fstream readFile;
-	readFile.open("projectList.txt");
-
-	if (readFile.is_open()) {
-
-		while (!readFile.eof()) {
-			char tmp[256];
-			readFile.getline(tmp, 256);
-
-			string orginData = tmp;
-
-			if (orginData.find(writeProjectName) >= 0) {
-				strcpy(tmp, ",");
-				strcpy(tmp, userId.c_str());
-				readFile.write(tmp, sizeof(tmp));
-			}
-		}
-		readFile.close();
-	}*/
 }

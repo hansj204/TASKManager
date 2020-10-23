@@ -98,6 +98,7 @@ void addTask(string projectFileName) {
 	task.progress = 0;
 	task.finishDate = '-';
 
+	//setw(15) + task.taskname << setw(15) + task.startDate << setw(15) << task.endDate << setw(10) << to_string(task.progress) + "%" + setw(10) + task.finishDate << endl;
 	string addTaskInfo = task.taskname + " " + task.startDate + " " + task.endDate + " " + to_string(task.progress) + " " + task.finishDate + "\n";
 
 	writeFile.write(addTaskInfo.c_str(), addTaskInfo.size());
