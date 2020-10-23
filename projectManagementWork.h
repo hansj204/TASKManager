@@ -9,4 +9,4 @@ void inviteTeamPlayer(string userId);
 
 void applyProjectParticipation (string userId);
 
-void createNewProject();
+void createNewProject(string userId);

@@ -99,18 +99,24 @@ void applyProjectParticipation(string userId) {
 
 }
 
-void createNewProject() {
+void createNewProject(string userId) {
 	string projectName;
 	cout << "프로젝트 명을 입력해주세요: ";
 	cin >> projectName;
 
-	projectName = projectName + ".txt";
+	fstream readFile;
+	readFile.open(projectName + ".txt");
+	readFile.close();
 
 	ofstream writeFile;
-	writeFile.open(projectName + ".txt");
+	writeFile.open("projectList.txt", ios::app);
+
+	string addProject = projectName + "-" + userId + "\n";
+
+	writeFile.write(addProject.c_str(), addProject.size());
 	writeFile.close();
 
-	fstream readFile;
+	/*fstream readFile;
 	readFile.open("projectList.txt");
 
 	if (readFile.is_open()) {
@@ -128,5 +134,5 @@ void createNewProject() {
 			}
 		}
 		readFile.close();
-	}
+	}*/
 }

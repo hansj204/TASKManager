@@ -39,7 +39,7 @@ int main() {
 				selectTaskList(loadProjectList(userInfo.id));
 				break;
 			case 2:
-				createNewProject();
+				createNewProject(userInfo.id);
 				break;
 			case 3:
 				inviteTeamPlayer(userInfo.id);
