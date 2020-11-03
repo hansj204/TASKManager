@@ -8,22 +8,23 @@
 #include<io.h>
 using namespace std;
 
-string loadProjectList(string userId) {
 
+string getProjectList(string userId, int workNum = 0) {
 	string projectList[10];
-	int i = 0, selectProject;
-	
+	int i = 0, selectProject = 0;
 	ifstream readFile;
 	readFile.open("projectList.txt");
 
 	if (readFile.is_open()) {
-		
+
 		while (!readFile.eof()) {
 			char tmp[256];
 			readFile.getline(tmp, 256);
 
 			if (tmp == "") break;
 			string originData = tmp;
+
+			cout << originData << endl;
 
 			if (originData.find(userId) >= 0) {
 				projectList[i] = strtok(tmp, "-");
@@ -33,19 +34,26 @@ string loadProjectList(string userId) {
 			}
 		}
 
-		readFile.close(); 
+		readFile.close();
 	}
-	
-	cout << "---참여 프로젝트 목록---------------------------------------" << endl;
-	for (int j = 0; j < i; j++) {
-		cout << j+1 << "." << projectList[j] << endl;
-	}
-	cout << "------------------------------------------------------------" << endl;
-	
-	cout << ">>";
-	cin >> selectProject;
 
-	return projectList[selectProject - 1] + ".txt";
+	if (workNum == 1) {
+		cout << "---참여 프로젝트 목록---------------------------------------" << endl;
+		for (int j = 0; j < i; j++) {
+			cout << j + 1 << "." << projectList[j] << endl;
+		}
+		cout << "------------------------------------------------------------" << endl;
+
+		cout << ">>";
+		cin >> selectProject;
+
+		return projectList[selectProject - 1] + ".txt";
+	}
+	return "";
+}
+
+string loadProjectList(string userId) {
+	return getProjectList(userId, 1);	
 }
 
 void projectUser(char  projectName[]) {
@@ -70,13 +78,14 @@ void projectUser(char  projectName[]) {
 }
 
 void inviteTeamPlayer(string userId) {
+
+	string comeUserId;
+	cout << "초대할 아이디를 입력해주세요 : ";
+	cin >> comeUserId;
+
 	
-	string writeProjectName;
-
-	cout << "참여할 프로젝트명을 입력해주세요 : ";
-	cin >> writeProjectName;
-
-	fstream readFile;
+	ifstream readFile;
+//	writeFile.open("projectList.txt");
 	readFile.open("projectList.txt");
 
 	if (readFile.is_open()) {
@@ -87,20 +96,40 @@ void inviteTeamPlayer(string userId) {
 
 			string orginData = tmp;
 
-			cout << orginData.find(writeProjectName);
+			cout << orginData << endl;
 
-			if (orginData.find(writeProjectName) >= 0) {
-				 strcpy(tmp, ",");
-				 strcpy(tmp, userId.c_str());
-				 readFile.write(tmp, sizeof(tmp));
+			if (orginData.find("new") >= 0) {
+				 strcat(tmp, ",");
+				 strcat(tmp, comeUserId.c_str());
+
+				 //istringstream readFile(tmp);
+				 string buffer;
+
+
+				cout << tmp << endl;
+
+				 //readFile.write(tmp, sizeof(tmp));
 			}
 		}
 		readFile.close();
+		//writeFile.close();
 	}
 }
 
 void applyProjectParticipation(string userId) {
+	string writeProjectName;
 
+	cout << "참여할 프로젝트명을 입력해주세요 : ";
+	cin >> writeProjectName;
+
+	ofstream writeFile;
+	writeFile.open("userWatingList.txt", ios::app);
+
+	//프로젝트 목록에 있을 시에만 저장 가능해도록 함
+	string userWating = writeProjectName + "-" + userId;
+
+	writeFile.write(userWating.c_str(), userWating.size());
+	writeFile.close();
 }
 
 void createNewProject(string userId) {

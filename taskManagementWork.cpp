@@ -59,7 +59,7 @@ void selectTaskList(string fileName) {
 		int selectWork;
 
 		cout << "=====================================================" << endl;
-		cout << "1.TASK 추가\t2.TASK 수정\t3.TASK 정렬" << endl;
+		cout << "1.TASK 추가\t2.TASK 수정\t3.TASK 정렬\t4. 다운로드" << endl;
 		cout << "=====================================================" << endl;
 		cin >> selectWork;
 
@@ -74,7 +74,11 @@ void selectTaskList(string fileName) {
 			updateTask(fileName, projectTask, taskCount - 1);
 			break;
 		case 3:
-						break;
+			/*sortTask(projectTask, taskCount - 1);*/
+			break;
+		case 4: 
+			downloadTask();
+			break;
 		default:
 			break;
 		}
@@ -154,9 +158,27 @@ void updateTask(string projectFileName, TASK project[], int taskRowCnt) {
 
 }
 
-void sortTask(TASK project[]) {
-	//sort(project, project + 2);
+/*void sortTask(TASK project[], int size) {
+
+	cout << "1. TASK명\t2.시작일\t3.마감일\t4.진행률\t5.완료일" << endl;
+
+	int minIndex;
+	int i, j;
+	for (i = 0; i < size - 1; i++) {
+		minIndex = i;
+		for (j = i + 1; j < size; j++)
+			if (project[j].taskname < project[minIndex].taskname)
+				minIndex = j;
+
+		swap(&project[i], &project[minIndex]);
+	}
 }
+
+int swap(TASK * a, TASK* b) {
+	TASK tmp = *a;
+	*a = *b;
+	*b = tmp;
+} */
 
 int binarySearch(TASK arr[], int l, int r, int searchNo, string searchData) { // 매개변수 : 배열이름, 배열 시작 인덱스, 배열 끝 인덱스, 찾으려는 값
 
@@ -208,4 +230,31 @@ void searchTask(TASK project[]) {
 	cin >> searchNo >> searchData;
 
 	binarySearch(project, 0, 1, searchNo, searchData);
+}
+
+void downloadTask() {
+	string route;
+
+	cout << "다운로드 받을 경로를 입력하세요 ex) C:\Download : ";
+	cin >> route;
+
+	ofstream writeFile;
+	writeFile.open(route + "\/new.csv");
+
+	cout << route + "\/new.csv" << endl;
+
+	ifstream readFile;
+	readFile.open("new.txt");
+
+	if (readFile.is_open()) {
+
+		while (!readFile.eof()) {
+			char tmp[256];
+			readFile.getline(tmp, 256);
+			cout << tmp << endl;
+			writeFile.write(tmp, sizeof(tmp));
+		}
+		writeFile.close();
+		readFile.close();
+	}	
 }

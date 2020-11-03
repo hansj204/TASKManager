@@ -53,18 +53,19 @@ User login(int selectUser) {
 	cout << "비밀번호: ";
 	cin >> userPw;
 
-	user += userId + "-" + userPw;
+	user = userId + "-" + userPw;
 	
 	string checkResult = checkUser(user);
 
-	while (checkResult.c_str() == "") {
+	while (strcmp(checkResult.c_str(), "")) {
 		cout << "아이디나 비밀번호가 틀렸습니다. 다시 입력해주세요." << endl;
 		cout << "아이디: ";
 		cin >> userId;
 		cout << "비밀번호: ";
 		cin >> userPw;
 
-		user += userId + "-" + userPw;
+		user = userId + "-" + userPw;
+		checkResult = checkUser(user);
 	}
 
 	char* check = new char[checkResult.size()];

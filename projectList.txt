@@ -1,1 +1,3 @@
-newPlayer-user, leader
+new-leader
+newnew-leader
+hi-leader

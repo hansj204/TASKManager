@@ -20,3 +20,5 @@ void sortTask(TASK project[]);
 int binarySearch(TASK arr[], int l, int r, int searchNo, string searchData);
 
 void searchTask(TASK project[]);
+
+void downloadTask();
