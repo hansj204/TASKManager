@@ -25,11 +25,11 @@ string getProjectList(string userId, int workNum = 0) {
 			string originData = tmp;
 
 			cout << originData << endl;
+			cout << originData.find("hi") << endl;
+			cout << (originData.find("hi") == string::npos) << endl;
 
-			if (originData.find(userId) >= 0) {
+			if (originData.find("hi") == string::npos) {
 				projectList[i] = strtok(tmp, "-");
-				cout << projectList[i] << endl;
-				cout << i << endl;
 				i++;
 			}
 		}

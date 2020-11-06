@@ -15,7 +15,7 @@ void addTask(string projectFileName);
 
 void updateTask(string projectFileName, TASK project[], int taskRowCnt);
 
-void sortTask(TASK project[]);
+void sortTask(TASK* arr, int m, int n);
 
 int binarySearch(TASK arr[], int l, int r, int searchNo, string searchData);
 

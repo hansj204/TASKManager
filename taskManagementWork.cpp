@@ -74,7 +74,7 @@ void selectTaskList(string fileName) {
 			updateTask(fileName, projectTask, taskCount - 1);
 			break;
 		case 3:
-			/*sortTask(projectTask, taskCount - 1);*/
+			sortTask(projectTask, 0, taskCount - 1); //소트(학생 배열,0,num-1)
 			break;
 		case 4: 
 			downloadTask();
@@ -158,6 +158,74 @@ void updateTask(string projectFileName, TASK project[], int taskRowCnt) {
 
 }
 
+
+void swap(TASK  *arr, int a, int b) {
+	TASK temp;
+	temp = arr[a];
+	arr[a] = arr[b];
+	arr[b] = temp;
+}
+
+
+void sortTask(TASK* arr, int m, int n) {
+	int choice = 1;
+
+	//선택 옵션이 1이면 성적순 내림차순정렬
+	if (choice == 1)
+	{
+		if (m < n)
+		{
+			int key = m;
+			int i = m + 1;
+			int j = n;
+			//엇갈리지 않을동안
+			while (i <= j)
+			{
+				while (i <= n && arr[i].taskname >= arr[key].taskname)
+					i++;
+				while (j > m && arr[j].taskname <= arr[key].taskname)
+					j--;
+				//엇갈리면 j와 key값 교체
+				if (i > j)
+					swap(arr, j, key);
+				//엇갈리지않으면 i와 j 교체
+				else
+					swap(arr, i, j);
+			}
+			//각각 정렬된 수의 전, 후 에서 똑같이 순환반복
+			sortTask(arr, m, j - 1);
+			sortTask(arr, j + 1, n);
+		}
+	}
+	//선택 옵션이 2이면 학번순 내림차순 정렬
+	/*else if (choice == 2)
+	{
+		if (m < n)
+		{
+			int key = m;
+			int i = m + 1;
+			int j = n;
+			//엇갈리지 않을동안
+			while (i <= j)
+			{
+				while (i <= n && arr[i].student_no >= arr[key].student_no)
+					i++;
+				while (j > m && arr[j].student_no <= arr[key].student_no)
+					j--;
+				//엇갈리면 j와 key값 교체
+				if (i > j)
+					SWAP(arr, j, key);
+				//엇갈리지않으면 i와 j 교체
+				else
+					SWAP(arr, i, j);
+			}
+			//각각 정렬된 수의 전, 후 에서 똑같이 순환반복
+			SORT(arr, m, j - 1, choice);
+			SORT(arr, j + 1, n, choice);
+		}
+	}*/
+}
+
 /*void sortTask(TASK project[], int size) {
 
 	cout << "1. TASK명\t2.시작일\t3.마감일\t4.진행률\t5.완료일" << endl;
@@ -172,12 +240,6 @@ void updateTask(string projectFileName, TASK project[], int taskRowCnt) {
 
 		swap(&project[i], &project[minIndex]);
 	}
-}
-
-int swap(TASK * a, TASK* b) {
-	TASK tmp = *a;
-	*a = *b;
-	*b = tmp;
 } */
 
 int binarySearch(TASK arr[], int l, int r, int searchNo, string searchData) { // 매개변수 : 배열이름, 배열 시작 인덱스, 배열 끝 인덱스, 찾으려는 값

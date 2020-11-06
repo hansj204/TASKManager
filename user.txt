@@ -1,4 +1,5 @@
-user-user tp,
-user-user tp
-leader-leader tl
-- - - - 
+leader-leader tp
+ha-ha tl
+hi-hi tl
+li-li tp
+- 

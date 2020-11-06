@@ -1,3 +1,4 @@
-new-leader
-newnew-leader
-hi-leader
+new - leader
+newnew - leader
+hi - leader
+hiPro - hi

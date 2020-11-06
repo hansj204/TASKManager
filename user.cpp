@@ -18,7 +18,7 @@ void newUser() {
 	cout << "팀장은 tl, 팀원은 tp를 입력해주세요";
 	cin >> newUserPos;
 
-	newUser = newUserId + "-" + newUserPw + " " + newUserPos;
+	newUser = newUserId + "-" + newUserPw + " " + newUserPos + "\n";
 
 	writeFile.write(newUser.c_str(), newUser.size());
 	writeFile.close();
@@ -40,7 +40,7 @@ string checkUser(string user) {
 		readFile.close();
 	}
 
-	return "";
+	return NULL;
 }
 User login(int selectUser) {
 	string user, userId, userPw;
@@ -57,7 +57,9 @@ User login(int selectUser) {
 	
 	string checkResult = checkUser(user);
 
-	while (strcmp(checkResult.c_str(), "")) {
+	/*cout << checkResult.compare(NULL) << endl;
+
+	while (checkResult.compare(NULL) == 0) {
 		cout << "아이디나 비밀번호가 틀렸습니다. 다시 입력해주세요." << endl;
 		cout << "아이디: ";
 		cin >> userId;
@@ -66,7 +68,7 @@ User login(int selectUser) {
 
 		user = userId + "-" + userPw;
 		checkResult = checkUser(user);
-	}
+	}*/
 
 	char* check = new char[checkResult.size()];
 	strncpy(check, checkResult.c_str(), sizeof(check));
