@@ -103,7 +103,7 @@ void addTask(string projectFileName) {
 	task.finishDate = '-';
 
 	//setw(15) + task.taskname << setw(15) + task.startDate << setw(15) << task.endDate << setw(10) << to_string(task.progress) + "%" + setw(10) + task.finishDate << endl;
-	string addTaskInfo = task.taskname + " " + task.startDate + " " + task.endDate + " " + to_string(task.progress) + " " + task.finishDate + "\n";
+	string addTaskInfo = task.taskname + "\t" + task.startDate + "\t" + task.endDate + "\t" + to_string(task.progress) + "\t" + task.finishDate + "\n";
 
 	writeFile.write(addTaskInfo.c_str(), addTaskInfo.size());
 	writeFile.close();
@@ -167,27 +167,30 @@ void swap(TASK  *arr, int a, int b) {
 }
 
 
-void sortTask(TASK* arr, int m, int n) {
-	int choice = 1;
+void sortTask(TASK *arr, int m, int n) {
+	int choice = 2;
+
 
 	//선택 옵션이 1이면 성적순 내림차순정렬
-	if (choice == 1)
-	{
-		if (m < n)
-		{
+	if (choice == 1) {
+		if (m < n) {
 			int key = m;
 			int i = m + 1;
 			int j = n;
 			//엇갈리지 않을동안
 			while (i <= j)
 			{
-				while (i <= n && arr[i].taskname >= arr[key].taskname)
+				while (i <= n && arr[i].progress >= arr[key].progress)
 					i++;
-				while (j > m && arr[j].taskname <= arr[key].taskname)
+				while (j > m && arr[j].progress <= arr[key].progress)
 					j--;
 				//엇갈리면 j와 key값 교체
-				if (i > j)
+				if (i > j) {
+					cout << arr[i].progress << endl;
+					cout << arr[key].progress << endl;
 					swap(arr, j, key);
+				}
+
 				//엇갈리지않으면 i와 j 교체
 				else
 					swap(arr, i, j);
@@ -198,8 +201,7 @@ void sortTask(TASK* arr, int m, int n) {
 		}
 	}
 	//선택 옵션이 2이면 학번순 내림차순 정렬
-	/*else if (choice == 2)
-	{
+	else if (choice == 2) {
 		if (m < n)
 		{
 			int key = m;
@@ -208,22 +210,22 @@ void sortTask(TASK* arr, int m, int n) {
 			//엇갈리지 않을동안
 			while (i <= j)
 			{
-				while (i <= n && arr[i].student_no >= arr[key].student_no)
+				while (i <= n && arr[i].progress >= arr[key].progress)
 					i++;
-				while (j > m && arr[j].student_no <= arr[key].student_no)
+				while (j > m && arr[j].progress <= arr[key].progress)
 					j--;
 				//엇갈리면 j와 key값 교체
 				if (i > j)
-					SWAP(arr, j, key);
+					sortTask(arr, j, key);
 				//엇갈리지않으면 i와 j 교체
 				else
-					SWAP(arr, i, j);
+					sortTask(arr, i, j);
 			}
 			//각각 정렬된 수의 전, 후 에서 똑같이 순환반복
-			SORT(arr, m, j - 1, choice);
-			SORT(arr, j + 1, n, choice);
+			sortTask(arr, m, j - 1);
+			sortTask(arr, j + 1, n);
 		}
-	}*/
+	}
 }
 
 /*void sortTask(TASK project[], int size) {

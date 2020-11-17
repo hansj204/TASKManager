@@ -21,14 +21,12 @@ string getProjectList(string userId, int workNum = 0) {
 			char tmp[256];
 			readFile.getline(tmp, 256);
 
-			if (tmp == "") break;
 			string originData = tmp;
 
-			cout << originData << endl;
-			cout << originData.find("hi") << endl;
-			cout << (originData.find("hi") == string::npos) << endl;
+			int findIndex = originData.find("-");
+			originData = originData.substr(findIndex+2, originData.length());
 
-			if (originData.find("hi") == string::npos) {
+			if (originData.find(userId) <= originData.length()) {
 				projectList[i] = strtok(tmp, "-");
 				i++;
 			}
