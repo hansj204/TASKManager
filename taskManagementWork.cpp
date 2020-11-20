@@ -7,12 +7,12 @@
 #include <locale.h>
 #include <stdlib.h>
 #include <iomanip>
-
 using namespace std;
 
 void selectTaskList(string fileName) {
-	while (1) {
 
+	while (1) {
+		int totalProject = 0;
 		TASK *projectTask = new TASK[100];
 		int i = 0, taskCount = 0, selectProject;
 
@@ -33,21 +33,40 @@ void selectTaskList(string fileName) {
 				char* token = strtok(tmp, " ");
 
 				while (token != NULL){
-					if(i == 0)		 projectTask[taskCount].taskname = token;
-					else if (i == 1) projectTask[taskCount].startDate = token;
-					else if (i == 2) projectTask[taskCount].endDate = token;
-					else if (i == 3) projectTask[taskCount].progress = atoi(token);
-					else if (i == 4) projectTask[taskCount].finishDate = token;
+
+					switch (i) {
+						case 0:
+							projectTask[taskCount].taskname = token;
+							break;
+						case 1:
+							projectTask[taskCount].startDate = token;
+							break;
+						case 2:
+							projectTask[taskCount].endDate = token;
+							break;
+						case 3:
+							projectTask[taskCount].progress = atoi(token);
+							totalProject += atoi(token);
+							break;
+						case 4:
+							projectTask[taskCount].finishDate = token;
+							break;
+					}
+
 					token = strtok(NULL, " ");
 					i++;
 				}
 
-				taskCount++;
+				++taskCount;
 			}
 
 			readFile.close();
 		}
 
+		double totalProgress = (totalProject == 0)? 0 : totalProject / (taskCount - 1);
+
+		cout << "=======================================================================" << endl;
+		cout << "프로젝트 진행률 : " << totalProgress << endl;
 		cout << "=======================================================================" << endl;
 		cout << left << setw(5) << "No." << setw(15) << "TASK명" << setw(15) << "시작일" << setw(15) << "마감일" << setw(10) << "진행률" << setw(10) << "완료일" << endl;
 		cout << "=======================================================================" << endl;
@@ -57,10 +76,12 @@ void selectTaskList(string fileName) {
 		cout << "=======================================================================\n" << endl;
 
 		int selectWork;
+		string selectKind;
 
 		cout << "=====================================================" << endl;
 		cout << "1.TASK 추가\t2.TASK 수정\t3.TASK 정렬\t4. 다운로드" << endl;
 		cout << "=====================================================" << endl;
+		cout << ">> ";
 		cin >> selectWork;
 
 		if (selectWork == -1) break;
@@ -74,9 +95,14 @@ void selectTaskList(string fileName) {
 			updateTask(fileName, projectTask, taskCount - 1);
 			break;
 		case 3:
-			sortTask(projectTask, 0, taskCount - 1); //소트(학생 배열,0,num-1)
+			cout << "오름차순 정렬을 원하면 asc, 내림차순을 원하면 desc를 입력해주세요" << endl;
+			cin >> selectKind;
+			sortTask(projectTask, 0, taskCount-2, selectKind);
+			saveProject(fileName, projectTask, taskCount - 1);
+		case 4:
+			downloadTask();
 			break;
-		case 4: 
+		case 5: 
 			downloadTask();
 			break;
 		default:
@@ -102,8 +128,7 @@ void addTask(string projectFileName) {
 	task.progress = 0;
 	task.finishDate = '-';
 
-	//setw(15) + task.taskname << setw(15) + task.startDate << setw(15) << task.endDate << setw(10) << to_string(task.progress) + "%" + setw(10) + task.finishDate << endl;
-	string addTaskInfo = task.taskname + "\t" + task.startDate + "\t" + task.endDate + "\t" + to_string(task.progress) + "\t" + task.finishDate + "\n";
+	string addTaskInfo = task.taskname + " " + task.startDate + " " + task.endDate + " " + to_string(task.progress) + " " + task.finishDate + "\n";
 
 	writeFile.write(addTaskInfo.c_str(), addTaskInfo.size());
 	writeFile.close();
@@ -159,90 +184,61 @@ void updateTask(string projectFileName, TASK project[], int taskRowCnt) {
 }
 
 
-void swap(TASK  *arr, int a, int b) {
-	TASK temp;
-	temp = arr[a];
-	arr[a] = arr[b];
-	arr[b] = temp;
+void saveProject(string projectFileName, TASK* projectTask, int taskRowCnt) {
+	ofstream writeFile;
+	writeFile.open(projectFileName);
+
+
+	for (int i = 0; i < taskRowCnt; i++) {
+		string udpdateTaskInfo = projectTask[i].taskname + " " + projectTask[i].startDate + " " + projectTask[i].endDate + " " + to_string(projectTask[i].progress) + " " + projectTask[i].finishDate + "\n";
+		writeFile.write(udpdateTaskInfo.c_str(), udpdateTaskInfo.size());
+	}
+
+	writeFile.close();
 }
 
 
-void sortTask(TASK *arr, int m, int n) {
-	int choice = 2;
-
-
-	//선택 옵션이 1이면 성적순 내림차순정렬
-	if (choice == 1) {
-		if (m < n) {
-			int key = m;
-			int i = m + 1;
-			int j = n;
-			//엇갈리지 않을동안
-			while (i <= j)
-			{
-				while (i <= n && arr[i].progress >= arr[key].progress)
-					i++;
-				while (j > m && arr[j].progress <= arr[key].progress)
-					j--;
-				//엇갈리면 j와 key값 교체
-				if (i > j) {
-					cout << arr[i].progress << endl;
-					cout << arr[key].progress << endl;
-					swap(arr, j, key);
-				}
-
-				//엇갈리지않으면 i와 j 교체
-				else
-					swap(arr, i, j);
-			}
-			//각각 정렬된 수의 전, 후 에서 똑같이 순환반복
-			sortTask(arr, m, j - 1);
-			sortTask(arr, j + 1, n);
-		}
-	}
-	//선택 옵션이 2이면 학번순 내림차순 정렬
-	else if (choice == 2) {
-		if (m < n)
-		{
-			int key = m;
-			int i = m + 1;
-			int j = n;
-			//엇갈리지 않을동안
-			while (i <= j)
-			{
-				while (i <= n && arr[i].progress >= arr[key].progress)
-					i++;
-				while (j > m && arr[j].progress <= arr[key].progress)
-					j--;
-				//엇갈리면 j와 key값 교체
-				if (i > j)
-					sortTask(arr, j, key);
-				//엇갈리지않으면 i와 j 교체
-				else
-					sortTask(arr, i, j);
-			}
-			//각각 정렬된 수의 전, 후 에서 똑같이 순환반복
-			sortTask(arr, m, j - 1);
-			sortTask(arr, j + 1, n);
-		}
-	}
+void swap(TASK* a, TASK* b) {
+	TASK temp = *a;
+	*a = *b;
+	*b = temp;
 }
 
-/*void sortTask(TASK project[], int size) {
+void sortTask(TASK* list, int left, int right, string selectKind) {
 
-	cout << "1. TASK명\t2.시작일\t3.마감일\t4.진행률\t5.완료일" << endl;
 
-	int minIndex;
-	int i, j;
-	for (i = 0; i < size - 1; i++) {
-		minIndex = i;
-		for (j = i + 1; j < size; j++)
-			if (project[j].taskname < project[minIndex].taskname)
-				minIndex = j;
+	if (left >= right)
+		return;
+	int pivot = left;
+	int start = left + 1;
+	int end = right;
 
-		swap(&project[i], &project[minIndex]);
+	while (start <= end) {
+		
+		if (selectKind == "asc") {
+			while (list[pivot].progress >= list[start].progress && start <= right)
+				start++;
+			while (list[pivot].progress <= list[end].progress && end > left)
+				end--;
+		} else  {
+			while (list[pivot].progress <= list[start].progress && start <= right)
+				start++;
+			while (list[pivot].progress >= list[end].progress && end > left)
+				end--;
+		}
+		
+
+		if (start > end)
+			swap(list[pivot], list[end]);
+		else
+			swap(list[start], list[end]);
 	}
-} */
+
+	sortTask(list, start, end - 1, selectKind);
+	sortTask(list, end + 1, right, selectKind);
+	
+}
+
 
 int binarySearch(TASK arr[], int l, int r, int searchNo, string searchData) { // 매개변수 : 배열이름, 배열 시작 인덱스, 배열 끝 인덱스, 찾으려는 값
 
@@ -295,6 +291,28 @@ void searchTask(TASK project[]) {
 
 	binarySearch(project, 0, 1, searchNo, searchData);
 }
+
+string checkUser(string user) {
+	ifstream readFile;
+	readFile.open("user.txt");
+
+	if (readFile.is_open()) {
+		while (!readFile.eof()) {
+			char tmp[256];
+			readFile.getline(tmp, 256);
+
+			if (readFile.eof()) break;
+
+			string orginData = tmp;
+
+			if (user.compare(strtok(tmp, " ")) == 0) { return orginData; }
+		}
+		readFile.close();
+	}
+
+	return "";
+}
+
 
 void downloadTask() {
 	string route;

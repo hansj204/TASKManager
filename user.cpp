@@ -33,6 +33,8 @@ string checkUser(string user) {
 			char tmp[256];
 			readFile.getline(tmp, 256);
 
+			if (readFile.eof()) break;
+
 			string orginData = tmp;
 
 			if (user.compare(strtok(tmp, " ")) == 0) { return orginData; }
@@ -40,27 +42,16 @@ string checkUser(string user) {
 		readFile.close();
 	}
 
-	return NULL;
+	return "";
 }
 User login(int selectUser) {
-	string user, userId, userPw;
+	string user, userId, userPw, checkResult;
 	
 	if (selectUser == 0) newUser();
 
 	cout << "\n----로그인---------------------------" << endl;
-	cout << "아이디: ";
-	cin >> userId;
-	cout << "비밀번호: ";
-	cin >> userPw;
 
-	user = userId + "-" + userPw;
-	
-	string checkResult = checkUser(user);
-
-	/*cout << checkResult.compare(NULL) << endl;
-
-	while (checkResult.compare(NULL) == 0) {
-		cout << "아이디나 비밀번호가 틀렸습니다. 다시 입력해주세요." << endl;
+	do {
 		cout << "아이디: ";
 		cin >> userId;
 		cout << "비밀번호: ";
@@ -68,7 +59,11 @@ User login(int selectUser) {
 
 		user = userId + "-" + userPw;
 		checkResult = checkUser(user);
-	}*/
+
+		if(checkResult == "") 
+			cout << "\n아이디나 비밀번호가 틀렸습니다. 다시 입력해주세요." << endl;
+
+	} while (checkResult == "");
 
 	char* check = new char[checkResult.size()];
 	strncpy(check, checkResult.c_str(), sizeof(check));
@@ -77,32 +72,7 @@ User login(int selectUser) {
 	member.position = checkResult.substr(checkResult.size() - 2, 2);
 	member.id = strtok(check, "-");
 
-	delete check;
+	delete[] check;
 	
 	return member;
 }
-
-//cout << tempUser << endl;
-
-	//char* Id = strtok(check, "-");
-
-	/*string projectList[30] = { "newProject1", "newProject2" };
-
-	User user;
-	user.id = "user";
-
-	while (tok2 != NULL) {
-		if(i == 0) user.id = strtok(tok2, ",");
-		else {
-			propjectList[j] = tok2;
-			j++;
-		}
-
-		i++;
-		cout << tok2 << endl;
-		tok2 = strtok(NULL, " ");
-	}
-
-	for (int i = 0; i < 5; i++) {
-		cout << i << " : "<< propjectList[i] << endl;
-	}*/

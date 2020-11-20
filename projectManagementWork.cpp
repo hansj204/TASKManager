@@ -24,10 +24,10 @@ string getProjectList(string userId, int workNum = 0) {
 			string originData = tmp;
 
 			int findIndex = originData.find("-");
-			originData = originData.substr(findIndex+2, originData.length());
+			originData = originData.substr(findIndex+1, originData.length());
 
 			if (originData.find(userId) <= originData.length()) {
-				projectList[i] = strtok(tmp, "-");
+				projectList[i] = strtok(tmp, " -");
 				i++;
 			}
 		}
