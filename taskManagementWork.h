@@ -19,7 +19,7 @@ void sortTask(TASK* arr, int left, int right, string selectKind);
 
 int binarySearch(TASK arr[], int l, int r, int searchNo, string searchData);
 
-void searchTask(TASK project[]);
+void searchTask(TASK project[], int taskRowCnt);
 
 void downloadTask();
 

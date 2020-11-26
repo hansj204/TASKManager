@@ -73,6 +73,8 @@ User login(int selectUser) {
 	member.id = strtok(check, "-");
 
 	delete[] check;
+
+	system("cls");
 	
 	return member;
 }

@@ -79,7 +79,7 @@ void selectTaskList(string fileName) {
 		string selectKind;
 
 		cout << "=====================================================" << endl;
-		cout << "1.TASK 추가\t2.TASK 수정\t3.TASK 정렬\t4. 다운로드" << endl;
+		cout << "1.TASK 추가\t2.TASK 수정\t3.TASK 정렬\t4. 검색\t5. 다운로드" << endl;
 		cout << "=====================================================" << endl;
 		cout << ">> ";
 		cin >> selectWork;
@@ -99,8 +99,9 @@ void selectTaskList(string fileName) {
 			cin >> selectKind;
 			sortTask(projectTask, 0, taskCount-2, selectKind);
 			saveProject(fileName, projectTask, taskCount - 1);
+			break;
 		case 4:
-			downloadTask();
+			searchTask(projectTask, taskCount - 1);
 			break;
 		case 5: 
 			downloadTask();
@@ -239,69 +240,64 @@ void sortTask(TASK* list, int left, int right, string selectKind) {
 	
 }
 
+void searchTask(TASK projectTask[], int taskRowCnt) {
+	int searchNo;
+	string searchData, temp;
 
-int binarySearch(TASK arr[], int l, int r, int searchNo, string searchData) { // 매개변수 : 배열이름, 배열 시작 인덱스, 배열 끝 인덱스, 찾으려는 값
+	while (true) {
 
-	if (r >= l) {
+		system("cls");
+		cout << "=====================================================" << endl;
+		cout << "1.No.\t2.TASK명\t3.시작일\t 4.마감일\t5.진행률\t6.완료일" << endl;
+		cout << "=====================================================" << endl;
+		cout << "검색할 항목의 No와 검색어를 입력하세요 : ";
+		cin >> searchNo >> searchData;
 
-		int mid = l + (r - l) / 2; // 중간 값 선택
-		string temp;
+		if (searchNo != 5) {
+			cout << "=======================================================================" << endl;
+			cout << left << setw(5) << "No." << setw(15) << "TASK명" << setw(15) << "시작일" << setw(15) << "마감일" << setw(10) << "진행률" << setw(10) << "완료일" << endl;
+			cout << "=======================================================================" << endl;
+			for (int i = 0; i < taskRowCnt - 1; i++) {
+				switch (searchNo) {
+				case 1:
+					temp = i + 1;
+					break;
+				case 2:
+					temp = projectTask[i].taskname;
+					break;
+				case 3:
+					temp = projectTask[i].startDate;
+					break;
+				case 4:
+					temp = projectTask[i].endDate;
+					break;
+				case 6:
+					temp = projectTask[i].finishDate;
+					break;
+				}
 
-		switch (searchNo) {
-		case 1:
-			temp = mid + 1;
-			break;
-		case 2:
-			temp = arr[mid].taskname;
-			break;
-		case 3:
-			temp = arr[mid].startDate;
-			break;
-		case 4:
-			temp = arr[mid].endDate;
-			break;
-		case 5:
-			temp = arr[mid].finishDate;
-			break;
+				if (temp.find(searchData))
+					cout << left << setw(5) << i + 1 << setw(15) << projectTask[i].taskname << setw(15) << projectTask[i].startDate << setw(15) << projectTask[i].endDate << setw(10) << to_string(projectTask[i].progress) + "%" << setw(10) << projectTask[i].finishDate << endl;
+			}
+			cout << "=======================================================================\n" << endl;
 		}
 
-		if (temp == searchData) return mid; // 비교하여 찾는 값이라면 해당 인덱스 반환
-
-
-		if (temp > searchData) return binarySearch(arr, l, mid - 1, searchNo, searchData); // 찾으려는 값보다 크다면 좌측 배열 탐색
-
-
-		return binarySearch(arr, mid + 1, r, searchNo, searchData); // 우측 배열 탐색
-
+		cout << "검색 종료를 원하면 0을 입력해주세요 >> ";
+		cout << searchNo;
+		if (searchNo == 0) break;
 	}
-
-	return -1;  // 찾으려는 값이 없다면 -1 반환
-
-}
-
-void searchTask(TASK project[]) {
-	int searchNo;
-	string searchData;
-
-	cout << "=====================================================" << endl;
-	cout << "1.No.\t2.TASK명\t3.시작일\t 4.마감일\t5.진행률\t6.완료일" << endl;
-	cout << "=====================================================" << endl;
-	cout << "검색할 항목의 No와 검색어를 입력하세요 : ";
-	cin >> searchNo >> searchData;
-
-	binarySearch(project, 0, 1, searchNo, searchData);
 }
 
 void downloadTask() {
 	string route;
 
-	cout << "다운로드 받을 경로를 입력하세요 ex) C:\Download : ";
+	cout << "다운로드 받을 경로를 입력하세요 ex) C:\\Download : ";
 	cin >> route;
 
 	ofstream writeFile;
-	writeFile.open(route + "\/new.csv");
+	writeFile.open(route + "\\/new.txt");
 
-	cout << route + "\/new.csv" << endl;
+	cout << route + "\\/new.txt" << endl;
 
 	ifstream readFile;
 	readFile.open("new.txt");
