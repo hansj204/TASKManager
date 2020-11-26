@@ -292,28 +292,6 @@ void searchTask(TASK project[]) {
 	binarySearch(project, 0, 1, searchNo, searchData);
 }
 
-string checkUser(string user) {
-	ifstream readFile;
-	readFile.open("user.txt");
-
-	if (readFile.is_open()) {
-		while (!readFile.eof()) {
-			char tmp[256];
-			readFile.getline(tmp, 256);
-
-			if (readFile.eof()) break;
-
-			string orginData = tmp;
-
-			if (user.compare(strtok(tmp, " ")) == 0) { return orginData; }
-		}
-		readFile.close();
-	}
-
-	return "";
-}
-
-
 void downloadTask() {
 	string route;
 
