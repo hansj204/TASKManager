@@ -4,6 +4,7 @@
 #include<fstream>
 #include <cstring>
 #include "taskManagementWork.h"
+#include "user.h"
 #include <locale.h>
 #include <stdlib.h>
 #include <iomanip>
@@ -63,7 +64,7 @@ void selectTaskList(string fileName) {
 			readFile.close();
 		}
 
-		double totalProgress = (totalProject == 0)? 0 : totalProject / (taskCount - 1);
+		double totalProgress = (totalProject == 0)? 0 : (double)(totalProject / (taskCount - 1));
 
 		cout << "=======================================================================" << endl;
 		cout << "프로젝트 진행률 : " << totalProgress << endl;
@@ -79,12 +80,16 @@ void selectTaskList(string fileName) {
 		string selectKind;
 
 		cout << "=====================================================" << endl;
-		cout << "1.TASK 추가\t2.TASK 수정\t3.TASK 정렬\t4. 검색\t5. 다운로드" << endl;
+		cout << "1.TASK 추가\t2.TASK 수정\t3.TASK 정렬\t4.검색\t5.다운로드" << endl;
+		cout << "(프로젝트 작업 돌아가기를 원하면 0을 입력해 주세요.)" << endl;
 		cout << "=====================================================" << endl;
 		cout << ">> ";
 		cin >> selectWork;
 
-		if (selectWork == -1) break;
+		if (selectWork == 0) {
+			system("cls");
+			break;
+		}
 
 		switch (selectWork) {
 
@@ -162,7 +167,9 @@ void updateTask(string projectFileName, TASK project[], int taskRowCnt) {
 		if (task.taskname != ".") project[selectNo - 1].taskname = task.taskname;
 		if (task.startDate != ".") project[selectNo - 1].startDate = task.startDate;
 		if (task.endDate != ".") project[selectNo - 1].endDate = task.endDate;
-		if (task.progress != -1) project[selectNo - 1].progress = task.progress;
+		if (task.progress != -1) {
+			project[selectNo - 1].progress = task.progress;
+		}
 		if (task.finishDate != ".") project[selectNo - 1].finishDate = task.finishDate;
 	}
 	else {
@@ -240,13 +247,40 @@ void sortTask(TASK* list, int left, int right, string selectKind) {
 	
 }
 
+
+int Max(int a, int b) {
+	if (a > b)
+		return a;
+	else
+		return b;
+}
+
+bool BoyerMooreSearch(const char* txt, const char* pat) {
+	int lengTxt = strlen(txt);
+	int lengPat = strlen(pat);
+	int badchar[256] = { -1, }; 
+	for (int i = 0; i < lengPat; i++)
+		badchar[(int)pat[i]] = i;
+	int s = 0, j; 
+	while (s < lengTxt - lengPat)
+	{
+		j = lengPat - 1;
+		while (j >= 0 && txt[s + j] == pat[j])
+			j--; 
+		if (j < 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+}
+
 void searchTask(TASK projectTask[], int taskRowCnt) {
-	int searchNo;
-	string searchData, temp;
+	int searchNo, goStop = -1;
+	string searchData, temp = "";
 
 	while (true) {
 
-		system("cls");
 		cout << "=====================================================" << endl;
 		cout << "1.No.\t2.TASK명\t3.시작일\t 4.마감일\t5.진행률\t6.완료일" << endl;
 		cout << "=====================================================" << endl;
@@ -276,15 +310,19 @@ void searchTask(TASK projectTask[], int taskRowCnt) {
 					break;
 				}
 
+				cout << i << endl;
+				cout << temp << endl;
+				cout << searchData << endl;
+
 				if (temp.find(searchData))
 					cout << left << setw(5) << i + 1 << setw(15) << projectTask[i].taskname << setw(15) << projectTask[i].startDate << setw(15) << projectTask[i].endDate << setw(10) << to_string(projectTask[i].progress) + "%" << setw(10) << projectTask[i].finishDate << endl;
 			}
 			cout << "=======================================================================\n" << endl;
 		}
-
+		cin.clear();
 		cout << "검색 종료를 원하면 0을 입력해주세요 >> ";
-		cout << searchNo;
-		if (searchNo == 0) break;
+		cout << goStop;
+		if (goStop == 0) break;
 	}
 }
 

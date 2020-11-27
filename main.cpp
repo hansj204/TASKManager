@@ -8,6 +8,8 @@
 #include <locale.h>
 using namespace std;
 
+static User userInfo;
+
 int main() {
 	int selectUser, selectProject, selectWork;
 	
@@ -16,7 +18,7 @@ int main() {
 	cout << "환영합니다. 새로운 회원이라면 0, 기존 회원이라면 1를 입력하여 주세요 :";
 	cin >> selectUser;
 
-	User userInfo = login(selectUser);
+	userInfo = login(selectUser);
 
 	cout << userInfo.id << "회원님 안녕하세요" << endl;
 	cout << "회원님의 현재 직급은 ";
