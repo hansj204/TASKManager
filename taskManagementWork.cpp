@@ -64,10 +64,10 @@ void selectTaskList(string fileName) {
 			readFile.close();
 		}
 
-		double totalProgress = (totalProject == 0)? 0 : (double)(totalProject / (taskCount - 1));
+		double totalProgress = (totalProject == 0)? 0 : (totalProject / (double)(taskCount - 1));
 
 		cout << "=======================================================================" << endl;
-		cout << "프로젝트 진행률 : " << totalProgress << endl;
+		cout << "프로젝트 진행률 : " << totalProgress << "%" << endl;
 		cout << "=======================================================================" << endl;
 		cout << left << setw(5) << "No." << setw(15) << "TASK명" << setw(15) << "시작일" << setw(15) << "마감일" << setw(10) << "진행률" << setw(10) << "완료일" << endl;
 		cout << "=======================================================================" << endl;
@@ -76,13 +76,13 @@ void selectTaskList(string fileName) {
 		}
 		cout << "=======================================================================\n" << endl;
 
-		int selectWork;
+		int selectWork = NULL;
 		string selectKind;
 
-		cout << "=====================================================" << endl;
+		cout << "===================================================================" << endl;
 		cout << "1.TASK 추가\t2.TASK 수정\t3.TASK 정렬\t4.검색\t5.다운로드" << endl;
+		cout << "===================================================================" << endl;
 		cout << "(프로젝트 작업 돌아가기를 원하면 0을 입력해 주세요.)" << endl;
-		cout << "=====================================================" << endl;
 		cout << ">> ";
 		cin >> selectWork;
 
@@ -100,9 +100,12 @@ void selectTaskList(string fileName) {
 			updateTask(fileName, projectTask, taskCount - 1);
 			break;
 		case 3:
-			cout << "오름차순 정렬을 원하면 asc, 내림차순을 원하면 desc를 입력해주세요" << endl;
-			cin >> selectKind;
-			sortTask(projectTask, 0, taskCount-2, selectKind);
+			cout << "=====================================================" << endl;
+			cout << "1.No.\t2.TASK명\t3.시작일\t 4.마감일\t5.진행률\t6.완료일" << endl;
+			cout << "=====================================================" << endl;
+			cout << "정렬할 항목을 입력하고 오름차순 정렬을 원하면 asc, 내림차순을 원하면 desc를 입력해주세요: ";
+			cin >> selectWork >> selectKind;
+			sortTask(projectTask, 0, taskCount-2, selectWork, selectKind);
 			saveProject(fileName, projectTask, taskCount - 1);
 			break;
 		case 4:
@@ -169,6 +172,9 @@ void updateTask(string projectFileName, TASK project[], int taskRowCnt) {
 		if (task.endDate != ".") project[selectNo - 1].endDate = task.endDate;
 		if (task.progress != -1) {
 			project[selectNo - 1].progress = task.progress;
+			if (task.progress == 100) {
+				task.finishDate = "2020-12-12";
+			}
 		}
 		if (task.finishDate != ".") project[selectNo - 1].finishDate = task.finishDate;
 	}
@@ -212,26 +218,34 @@ void swap(TASK* a, TASK* b) {
 	*b = temp;
 }
 
-void sortTask(TASK* list, int left, int right, string selectKind) {
-
-
+void sortTask(TASK* list, int left, int right, int selectWork, string selectKind) {
 	if (left >= right)
 		return;
 	int pivot = left;
 	int start = left + 1;
 	int end = right;
-
+	
+	string pivotList;
+	string startList;
+	string endList;
+	
 	while (start <= end) {
 		
+		if (selectWork == 2) {
+			pivotList = list[pivot].taskname;
+			startList = list[start].taskname;
+			endList = list[end].progress;
+		}
+
 		if (selectKind == "asc") {
-			while (list[pivot].progress >= list[start].progress && start <= right)
+			while (pivotList >= startList && start <= right)
 				start++;
-			while (list[pivot].progress <= list[end].progress && end > left)
+			while (pivotList <= endList && end > left)
 				end--;
 		} else  {
-			while (list[pivot].progress <= list[start].progress && start <= right)
+			while (pivotList <= startList && start <= right)
 				start++;
-			while (list[pivot].progress >= list[end].progress && end > left)
+			while (pivotList >= endList && end > left)
 				end--;
 		}
 		
@@ -242,8 +256,8 @@ void sortTask(TASK* list, int left, int right, string selectKind) {
 			swap(list[start], list[end]);
 	}
 
-	sortTask(list, start, end - 1, selectKind);
-	sortTask(list, end + 1, right, selectKind);
+	sortTask(list, start, end - 1, selectWork, selectKind);
+	sortTask(list, end + 1, right, selectWork, selectKind);
 	
 }
 
@@ -327,28 +341,14 @@ void searchTask(TASK projectTask[], int taskRowCnt) {
 }
 
 void downloadTask() {
+	namespace fs = std::experimental::filesystem::v1;
 	string route;
 
 	cout << "다운로드 받을 경로를 입력하세요 ex) C:\\Download : ";
 	cin >> route;
 
 	ofstream writeFile;
-	writeFile.open(route + "\\/new.txt");
+	writeFile.open(route + "/new.txt");
 
 	cout << route + "\\/new.txt" << endl;
-
-	ifstream readFile;
-	readFile.open("new.txt");
-
-	if (readFile.is_open()) {
-
-		while (!readFile.eof()) {
-			char tmp[256];
-			readFile.getline(tmp, 256);
-			cout << tmp << endl;
-			writeFile.write(tmp, sizeof(tmp));
-		}
-		writeFile.close();
-		readFile.close();
-	}	
 }
