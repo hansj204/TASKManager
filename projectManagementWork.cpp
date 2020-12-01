@@ -76,42 +76,57 @@ void projectUser(char  projectName[]) {
 }
 
 void inviteTeamPlayer(string userId) {
+	int inviteType;
 
-	string comeUserId;
-	cout << "초대할 아이디를 입력해주세요 : ";
-	cin >> comeUserId;
+	char *inviteProjectName = strcpy(inviteProjectName, getProjectList(userId, 1).c_str());
+	cout << inviteProjectName << endl;
+	strtok(inviteProjectName, ".");
 
-	
-	ifstream readFile;
-//	writeFile.open("projectList.txt");
-	readFile.open("projectList.txt");
+	/*int findIndex = inviteProjectName.find(".");
+	inviteProjectName = inviteProjectName.substr(findIndex + 1, inviteProjectName.length());*/
 
-	if (readFile.is_open()) {
+	cout << inviteProjectName << endl;
 
-		while (!readFile.eof()) {
-			char tmp[256];
-			readFile.getline(tmp, 256);
+	cout << "1. 대기 참여자 수락\t2. 초대" << endl;
+	cin >> inviteType;
 
-			string orginData = tmp;
+	if (inviteType == 1) {
+		ifstream readFile;
+		//	writeFile.open("projectList.txt");
+		readFile.open("userWatingList.txt");
 
-			cout << orginData << endl;
+		if (readFile.is_open()) {
 
-			if (orginData.find("new") >= 0) {
-				 strcat(tmp, ",");
-				 strcat(tmp, comeUserId.c_str());
+			while (!readFile.eof()) {
+				char tmp[256];
+				readFile.getline(tmp, 256);
 
-				 //istringstream readFile(tmp);
-				 string buffer;
+				if (readFile.eof()) break;
+
+				string orginData = tmp;
+				cout << orginData.find(inviteProjectName) << endl;
+
+				if (orginData.find(inviteProjectName) >= 0) {
+					cout << tmp << endl;
 
 
-				cout << tmp << endl;
+					//istringstream readFile(tmp);
 
-				 //readFile.write(tmp, sizeof(tmp));
+
+
+					//readFile.write(tmp, sizeof(tmp));
+				}
 			}
+			readFile.close();
+			//writeFile.close();
 		}
-		readFile.close();
-		//writeFile.close();
 	}
+	else {
+		string comeUserId;
+		cout << "초대할 아이디를 입력해주세요 : ";
+		cin >> comeUserId;
+	}
+
 }
 
 void applyProjectParticipation(string userId) {
@@ -124,7 +139,7 @@ void applyProjectParticipation(string userId) {
 	writeFile.open("userWatingList.txt", ios::app);
 
 	//프로젝트 목록에 있을 시에만 저장 가능해도록 함
-	string userWating = writeProjectName + "-" + userId;
+	string userWating = writeProjectName + "-" + userId + "\n";
 
 	writeFile.write(userWating.c_str(), userWating.size());
 	writeFile.close();
