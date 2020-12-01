@@ -10,3 +10,5 @@ void inviteTeamPlayer(string userId);
 void applyProjectParticipation (string userId);
 
 void createNewProject(string userId);
+
+void insertProjectUser(char* projectName, string name);

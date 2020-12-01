@@ -77,22 +77,21 @@ void projectUser(char  projectName[]) {
 
 void inviteTeamPlayer(string userId) {
 	int inviteType;
+	string invitePermit;
 
-	char *inviteProjectName = strcpy(inviteProjectName, getProjectList(userId, 1).c_str());
-	cout << inviteProjectName << endl;
-	strtok(inviteProjectName, ".");
+	string inviteProjectName = getProjectList(userId, 1);
+	char* projectName = new char[inviteProjectName.length() + 1];
+	strcpy(projectName, inviteProjectName.c_str());
+	projectName = strtok(projectName, ".");
 
 	/*int findIndex = inviteProjectName.find(".");
 	inviteProjectName = inviteProjectName.substr(findIndex + 1, inviteProjectName.length());*/
-
-	cout << inviteProjectName << endl;
 
 	cout << "1. 대기 참여자 수락\t2. 초대" << endl;
 	cin >> inviteType;
 
 	if (inviteType == 1) {
 		ifstream readFile;
-		//	writeFile.open("projectList.txt");
 		readFile.open("userWatingList.txt");
 
 		if (readFile.is_open()) {
@@ -104,27 +103,27 @@ void inviteTeamPlayer(string userId) {
 				if (readFile.eof()) break;
 
 				string orginData = tmp;
-				cout << orginData.find(inviteProjectName) << endl;
+				if (strcmp(strtok(tmp, "-"), projectName) >= 0) {
 
-				if (orginData.find(inviteProjectName) >= 0) {
-					cout << tmp << endl;
+					int findIndex = orginData.find("-");
+					string name = orginData.substr(findIndex + 1, orginData.length());
 
+					cout << "대기중인 참여자: " << name << endl;
+					cout << "참여 수락은 Y, 거절은 N을 입력해주세요\n >> ";
+					cin >> invitePermit;
 
-					//istringstream readFile(tmp);
-
-
-
-					//readFile.write(tmp, sizeof(tmp));
+					if (invitePermit == "Y") 
+						insertProjectUser(projectName, name);					
 				}
 			}
 			readFile.close();
-			//writeFile.close();
 		}
 	}
 	else {
 		string comeUserId;
 		cout << "초대할 아이디를 입력해주세요 : ";
 		cin >> comeUserId;
+		insertProjectUser(projectName, comeUserId);
 	}
 
 }
@@ -159,5 +158,33 @@ void createNewProject(string userId) {
 	string addProject = (_access("projectList.txt", 0) == 0)? "\n" + projectName + "-" + userId : projectName + "-" + userId;
 
 	writeFile.write(addProject.c_str(), addProject.size());
+	writeFile.close();
+}
+
+void insertProjectUser(char* projectName, string name) {
+	int pos = 0;
+
+	ifstream readFile;
+	readFile.open("projectList.txt");
+
+	if (readFile.is_open()) {
+		while (!readFile.eof()) {
+			char tmp[256];
+			readFile.getline(tmp, 256);
+
+			string orginData = tmp;
+
+			if (strcmp(projectName, strtok(tmp, "-")) == 0) {
+				break;
+			}
+			pos += orginData.size();
+		}
+		readFile.close();
+	}
+
+	ofstream writeFile;
+	writeFile.open("projectList.txt", ios::app);
+	writeFile.seekp(3);
+	writeFile.write(("," + name).c_str(), ("," + name).size());
 	writeFile.close();
 }
