@@ -84,13 +84,12 @@ void inviteTeamPlayer(string userId) {
 	strcpy(projectName, inviteProjectName.c_str());
 	projectName = strtok(projectName, ".");
 
-	/*int findIndex = inviteProjectName.find(".");
-	inviteProjectName = inviteProjectName.substr(findIndex + 1, inviteProjectName.length());*/
 
 	cout << "1. 대기 참여자 수락\t2. 초대" << endl;
 	cin >> inviteType;
 
 	if (inviteType == 1) {
+		string tempData;
 		ifstream readFile;
 		readFile.open("userWatingList.txt");
 
@@ -102,22 +101,36 @@ void inviteTeamPlayer(string userId) {
 
 				if (readFile.eof()) break;
 
-				string orginData = tmp;
+				string originData = tmp;
 				if (strcmp(strtok(tmp, "-"), projectName) >= 0) {
 
-					int findIndex = orginData.find("-");
-					string name = orginData.substr(findIndex + 1, orginData.length());
+					string userName = originData;
+					int findIndex = userName.find("-");
+					string name = userName.substr(findIndex + 1, userName.length());
 
 					cout << "대기중인 참여자: " << name << endl;
 					cout << "참여 수락은 Y, 거절은 N을 입력해주세요\n >> ";
 					cin >> invitePermit;
 
-					if (invitePermit == "Y") 
-						insertProjectUser(projectName, name);					
+					if (invitePermit == "Y") {
+						insertProjectUser(projectName, name);
+						continue;
+					}
 				}
+
+				tempData = tempData + originData;
+				cout << tempData << endl;
 			}
 			readFile.close();
 		}
+
+		cout << tempData << endl;
+
+		ofstream writeFile;
+		writeFile.open("userWatingList.txt");
+		writeFile.write(tempData.c_str(), tempData.size());
+		writeFile.close();
+
 	}
 	else {
 		string comeUserId;
@@ -162,8 +175,7 @@ void createNewProject(string userId) {
 }
 
 void insertProjectUser(char* projectName, string name) {
-	int pos = 0;
-
+	string tempData;
 	ifstream readFile;
 	readFile.open("projectList.txt");
 
@@ -174,17 +186,18 @@ void insertProjectUser(char* projectName, string name) {
 
 			string orginData = tmp;
 
-			if (strcmp(projectName, strtok(tmp, "-")) == 0) {
-				break;
-			}
-			pos += orginData.size();
+			if (strcmp(projectName, strtok(tmp, "-")) == 0) 
+				orginData = orginData + "," + name;
+			
+			tempData += orginData + "\n";
 		}
 		readFile.close();
 	}
 
+	cout << tempData << endl;
+
 	ofstream writeFile;
-	writeFile.open("projectList.txt", ios::app);
-	writeFile.seekp(3);
-	writeFile.write(("," + name).c_str(), ("," + name).size());
+	writeFile.open("projectList.txt");
+	writeFile.write(tempData.c_str(), tempData.size());
 	writeFile.close();
 }
