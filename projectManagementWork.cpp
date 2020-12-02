@@ -54,27 +54,6 @@ string loadProjectList(string userId) {
 	return getProjectList(userId, 1);	
 }
 
-void projectUser(char  projectName[]) {
-	string projectList[50];
-
-	ifstream readFile;
-	readFile.open("projectList.txt");    //파일 열기
-
-	if (readFile.is_open()) {
-		while (!readFile.eof()) {
-			char tmp[256];
-			readFile.getline(tmp, 256);
-
-			string orginData = tmp;
-
-			char* projectName = strtok(tmp, "-");
-
-			//if (strcmp(check, user) == 0) { return check; }//지금은 읽은 문자열 바로 출력.
-		}
-		readFile.close();    //파일 닫아줍니다.
-	}
-}
-
 void inviteTeamPlayer(string userId) {
 	int inviteType;
 	string invitePermit;
@@ -181,6 +160,9 @@ void insertProjectUser(char* projectName, string name) {
 
 	if (readFile.is_open()) {
 		while (!readFile.eof()) {
+
+			if (readFile.eof()) break;
+
 			char tmp[256];
 			readFile.getline(tmp, 256);
 
@@ -189,10 +171,13 @@ void insertProjectUser(char* projectName, string name) {
 			if (strcmp(projectName, strtok(tmp, "-")) == 0) 
 				orginData = orginData + "," + name;
 			
-			tempData += orginData + "\n";
+			tempData += "\n" + orginData;
 		}
 		readFile.close();
 	}
+
+	int findIndex = tempData.find_last_of("\n");
+	tempData = tempData.substr(1, tempData.size());
 
 	cout << tempData << endl;
 
