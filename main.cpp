@@ -32,12 +32,13 @@ int main() {
 
 		if (strcmp(userInfo.position.c_str(), "tl") == 0) {
 			cout << "------------------------------------------------------------------------" << endl;
-			cout << "1.기존 프로젝트 불러오기\t2.새로운 프로젝트 생성\t3. 프로젝트 참여 신청 수락" << endl;
+			cout << "1.기존 프로젝트 불러오기\t2.새로운 프로젝트 생성 \t 3. 프로젝트 참여 신청 수락" << endl;
 			cout << "------------------------------------------------------------------------" << endl;
+			cout << "(프로젝트 종료를 원하면 0을 입력해 주세요.)" << endl;
 			cout << ">>";
 			cin >> selectProject;
 
-			if (selectProject == -1) break;
+			if (selectProject == 0) break;
 
 			switch (selectProject) {
 			case 1:
@@ -56,10 +57,11 @@ int main() {
 			cout << "------------------------------------------------------------------------" << endl;
 			cout << "1.기존 프로젝트 불러오기\t2.프로젝트 참여 신청" << endl;
 			cout << "------------------------------------------------------------------------" << endl;
+			cout << "(프로젝트 종료를 원하면 0을 입력해 주세요.)" << endl;
 			cout << ">>";
 			cin >> selectProject;
 
-			if (selectProject == -1) break;
+			if (selectProject == 0) break;
 
 			switch (selectProject) {
 			case 1:

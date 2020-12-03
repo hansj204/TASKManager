@@ -63,7 +63,7 @@ void selectTaskList(string fileName) {
 
 			readFile.close();
 		}
-
+		system("cls");
 		double totalProgress = (totalProject == 0)? 0 : (totalProject / (double)(taskCount - 1));
 
 		cout << "=======================================================================" << endl;
@@ -100,9 +100,9 @@ void selectTaskList(string fileName) {
 			updateTask(fileName, projectTask, taskCount - 1);
 			break;
 		case 3:
-			cout << "=====================================================" << endl;
-			cout << "1.No.\t2.TASK명\t3.시작일\t 4.마감일\t5.진행률\t6.완료일" << endl;
-			cout << "=====================================================" << endl;
+			cout << "===================================================================================" << endl;
+			cout << "1.TASK명\t2.시작일\t 3.마감일\t4.진행률\t5.완료일" << endl;
+			cout << "===================================================================================" << endl;
 			cout << "정렬할 항목을 입력하고 오름차순 정렬을 원하면 asc, 내림차순을 원하면 desc를 입력해주세요: ";
 			cin >> selectWork >> selectKind;
 			sortTask(projectTask, 0, taskCount-2, selectWork, selectKind);
@@ -228,27 +228,68 @@ void sortTask(TASK* list, int left, int right, int selectWork, string selectKind
 	string pivotList;
 	string startList;
 	string endList;
+
+	int pivotListNum;
+	int startListNum;
+	int endListNum;
 	
 	while (start <= end) {
 		
-		if (selectWork == 2) {
-			pivotList = list[pivot].taskname;
-			startList = list[start].taskname;
-			endList = list[end].progress;
-		}
+		if (selectWork != 4) {
 
-		if (selectKind == "asc") {
-			while (pivotList >= startList && start <= right)
-				start++;
-			while (pivotList <= endList && end > left)
-				end--;
-		} else  {
-			while (pivotList <= startList && start <= right)
-				start++;
-			while (pivotList >= endList && end > left)
-				end--;
+			if (selectWork == 1) {
+				pivotList = list[pivot].taskname;
+				startList = list[start].taskname;
+				endList = list[end].taskname;
+			}
+			else if (selectWork == 2) {
+				pivotList = list[pivot].startDate;
+				startList = list[start].startDate;
+				endList = list[end].startDate;
+			}
+			else if (selectWork == 3) {
+				pivotList = list[pivot].endDate;
+				startList = list[start].endDate;
+				endList = list[end].endDate;
+			}
+			else if (selectWork == 5) {
+				pivotList = list[pivot].finishDate;
+				startList = list[start].finishDate;
+				endList = list[end].finishDate;
+			}
+
+			if (selectKind == "asc") {
+				while (pivotList >= startList && start <= right)
+					start++;
+				while (pivotList <= endList && end > left)
+					end--;
+			}
+			else {
+				while (pivotList <= startList && start <= right)
+					start++;
+				while (pivotList >= endList && end > left)
+					end--;
+			}
+
+		} else {
+				//진행률 정렬
+				pivotListNum = list[pivot].progress;
+				startListNum = list[start].progress;
+				endListNum = list[end].progress;
+
+				if (selectKind == "asc") {
+					while (pivotListNum >= startListNum && start <= right)
+						start++;
+					while (pivotListNum <= endListNum && end > left)
+						end--;
+				}
+				else {
+					while (pivotListNum <= startListNum && start <= right)
+						start++;
+					while (pivotListNum >= endListNum && end > left)
+						end--;
+				}
 		}
-		
 
 		if (start > end)
 			swap(list[pivot], list[end]);
@@ -290,53 +331,56 @@ bool BoyerMooreSearch(const char* txt, const char* pat) {
 }
 
 void searchTask(TASK projectTask[], int taskRowCnt) {
-	int searchNo, goStop = -1;
-	string searchData, temp = "";
+	int searchNo;
+	string searchData, temp = "", goStop;
 
 	while (true) {
 
-		cout << "=====================================================" << endl;
-		cout << "1.No.\t2.TASK명\t3.시작일\t 4.마감일\t5.진행률\t6.완료일" << endl;
-		cout << "=====================================================" << endl;
+		cout << "===================================================================================" << endl;
+		cout << "1.TASK명\t2.시작일\t 3.마감일\t4.진행률\t5.완료일" << endl;
+		cout << "===================================================================================" << endl;
 		cout << "검색할 항목의 No와 검색어를 입력하세요 : ";
 		cin >> searchNo >> searchData;
 
-		if (searchNo != 5) {
-			cout << "=======================================================================" << endl;
-			cout << left << setw(5) << "No." << setw(15) << "TASK명" << setw(15) << "시작일" << setw(15) << "마감일" << setw(10) << "진행률" << setw(10) << "완료일" << endl;
-			cout << "=======================================================================" << endl;
-			for (int i = 0; i < taskRowCnt - 1; i++) {
+		system("cls");
+
+		cout << "=======================================================================" << endl;
+		cout << left << setw(5) << "No." << setw(15) << "TASK명" << setw(15) << "시작일" << setw(15) << "마감일" << setw(10) << "진행률" << setw(10) << "완료일" << endl;
+		cout << "=======================================================================" << endl;
+
+		for (int i = 0; i < taskRowCnt - 1; i++) {
+
+			if (searchNo != 4) {
 				switch (searchNo) {
 				case 1:
-					temp = i + 1;
-					break;
-				case 2:
 					temp = projectTask[i].taskname;
 					break;
-				case 3:
+				case 2:
 					temp = projectTask[i].startDate;
 					break;
-				case 4:
+				case 3:
 					temp = projectTask[i].endDate;
 					break;
-				case 6:
+				case 5:
 					temp = projectTask[i].finishDate;
 					break;
 				}
 
-				cout << i << endl;
-				cout << temp << endl;
-				cout << searchData << endl;
-
 				if (temp.find(searchData))
 					cout << left << setw(5) << i + 1 << setw(15) << projectTask[i].taskname << setw(15) << projectTask[i].startDate << setw(15) << projectTask[i].endDate << setw(10) << to_string(projectTask[i].progress) + "%" << setw(10) << projectTask[i].finishDate << endl;
+
 			}
-			cout << "=======================================================================\n" << endl;
+			else {
+				if (projectTask[i].progress == stoi(searchData))
+					cout << left << setw(5) << i + 1 << setw(15) << projectTask[i].taskname << setw(15) << projectTask[i].startDate << setw(15) << projectTask[i].endDate << setw(10) << to_string(projectTask[i].progress) + "%" << setw(10) << projectTask[i].finishDate << endl;
+			}
 		}
-		cin.clear();
-		cout << "검색 종료를 원하면 0을 입력해주세요 >> ";
-		cout << goStop;
-		if (goStop == 0) break;
+			
+		cout << "=======================================================================" << endl;
+
+		cout << "검색한 목록 조회를 종료를 원하면 아무 키를 입력해주세요 >> ";
+		cin >> goStop;
+		if(goStop.compare("") != 0) break;
 	}
 }
 
