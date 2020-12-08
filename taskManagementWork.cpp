@@ -366,7 +366,7 @@ void searchTask(TASK projectTask[], int taskRowCnt) {
 					break;
 				}
 
-				if (temp.find(searchData))
+				if (temp == searchData)
 					cout << left << setw(5) << i + 1 << setw(15) << projectTask[i].taskname << setw(15) << projectTask[i].startDate << setw(15) << projectTask[i].endDate << setw(10) << to_string(projectTask[i].progress) + "%" << setw(10) << projectTask[i].finishDate << endl;
 
 			}
