@@ -8,6 +8,8 @@
 #include <locale.h>
 #include <stdlib.h>
 #include <iomanip>
+#include <vector>
+#include <ctime>
 using namespace std;
 
 void selectTaskList(string fileName) {
@@ -16,7 +18,8 @@ void selectTaskList(string fileName) {
 		int totalProject = 0;
 		TASK *projectTask = new TASK[100];
 		int i = 0, taskCount = 0, selectProject;
-
+		vector<double> planProgress;
+		
 		setlocale(LC_ALL, "ko-KR");
 
 		ifstream readFile;
@@ -53,7 +56,12 @@ void selectTaskList(string fileName) {
 							projectTask[taskCount].finishDate = token;
 							break;
 					}
-
+					/*cout << currentDateTime() << endl;
+					int ing = currentDateTime() - parseDateString(projectTask[i].startDate);
+					int plan = parseDateString(projectTask[i].endDate) - parseDateString(projectTask[i].startDate);
+					cout << (ing / plan) * 100 << endl;
+					planProgress.push_back((ing/plan) * 100);
+					cout << planProgress.at(i) << endl;*/
 					token = strtok(NULL, " ");
 					i++;
 				}
@@ -66,8 +74,11 @@ void selectTaskList(string fileName) {
 		system("cls");
 		double totalProgress = (totalProject == 0)? 0 : (totalProject / (double)(taskCount - 1));
 
+		
+
 		cout << "=======================================================================" << endl;
 		cout << "프로젝트 진행률 : " << totalProgress << "%" << endl;
+		//cout << "계획 대비 프로젝트 진행률 : " << totalProgress << "%" << endl;
 		cout << "=======================================================================" << endl;
 		cout << left << setw(5) << "No." << setw(15) << "TASK명" << setw(15) << "시작일" << setw(15) << "마감일" << setw(10) << "진행률" << setw(10) << "완료일" << endl;
 		cout << "=======================================================================" << endl;
@@ -205,6 +216,7 @@ void saveProject(string projectFileName, TASK* projectTask, int taskRowCnt) {
 
 	for (int i = 0; i < taskRowCnt; i++) {
 		string udpdateTaskInfo = projectTask[i].taskname + " " + projectTask[i].startDate + " " + projectTask[i].endDate + " " + to_string(projectTask[i].progress) + " " + projectTask[i].finishDate + "\n";
+		cout << udpdateTaskInfo;
 		writeFile.write(udpdateTaskInfo.c_str(), udpdateTaskInfo.size());
 	}
 
@@ -218,114 +230,51 @@ void swap(TASK* a, TASK* b) {
 	*b = temp;
 }
 
-void sortTask(TASK* list, int left, int right, int selectWork, string selectKind) {
-	if (left >= right)
-		return;
-	int pivot = left;
-	int start = left + 1;
-	int end = right;
-	
-	string pivotList;
-	string startList;
-	string endList;
+int returnValue(TASK* array, int index, int selectWork) {
+	if (selectWork == 2) return parseDateString(array[index].startDate);
+	else if (selectWork == 3) return parseDateString(array[index].endDate);
+	else if (selectWork == 3) return array[index].progress;
+	else if (selectWork == 5) return parseDateString(array[index].finishDate);
+}
 
-	int pivotListNum;
-	int startListNum;
-	int endListNum;
-	
-	while (start <= end) {
-		
-		if (selectWork != 4) {
+void sortTask(TASK* list, int start, int end, int selectWork, string selectKind) {
+	int i, j;
+	int iValue = returnValue(list, i, selectWork);
+	int jValue = returnValue(list, j, selectWork);
 
-			if (selectWork == 1) {
-				pivotList = list[pivot].taskname;
-				startList = list[start].taskname;
-				endList = list[end].taskname;
-			}
-			else if (selectWork == 2) {
-				pivotList = list[pivot].startDate;
-				startList = list[start].startDate;
-				endList = list[end].startDate;
-			}
-			else if (selectWork == 3) {
-				pivotList = list[pivot].endDate;
-				startList = list[start].endDate;
-				endList = list[end].endDate;
-			}
-			else if (selectWork == 5) {
-				pivotList = list[pivot].finishDate;
-				startList = list[start].finishDate;
-				endList = list[end].finishDate;
-			}
+	for (i = 1; i < n; i++) {
+		iValue = returnValue(list, i, selectWork);
 
-			if (selectKind == "asc") {
-				while (pivotList >= startList && start <= right)
-					start++;
-				while (pivotList <= endList && end > left)
-					end--;
-			}
-			else {
-				while (pivotList <= startList && start <= right)
-					start++;
-				while (pivotList >= endList && end > left)
-					end--;
-			}
-
-		} else {
-				//진행률 정렬
-				pivotListNum = list[pivot].progress;
-				startListNum = list[start].progress;
-				endListNum = list[end].progress;
-
-				if (selectKind == "asc") {
-					while (pivotListNum >= startListNum && start <= right)
-						start++;
-					while (pivotListNum <= endListNum && end > left)
-						end--;
-				}
-				else {
-					while (pivotListNum <= startListNum && start <= right)
-						start++;
-					while (pivotListNum >= endListNum && end > left)
-						end--;
-				}
+		for (j = i - 1; j >= 0 && jValue > iValue; j--) {
+			list[j + 1] = list[j]; // 레코드의 오른쪽으로 이동
 		}
 
-		if (start > end)
-			swap(list[pivot], list[end]);
-		else
-			swap(list[start], list[end]);
+		list[j + 1] = iValue;
 	}
 
-	sortTask(list, start, end - 1, selectWork, selectKind);
-	sortTask(list, end + 1, right, selectWork, selectKind);
+	int pivot = start; 
+	int i = start + 1, j = end;
+	int temp;
 	
-}
+	int pivotValue = returnValue(list, pivot, selectWork);
 
+	while (i <= j) {
+		while (i <= end && iValue <= pivotValue) {
+			i++;
+		}
+		while (j > start && jValue >= pivotValue) {
+			j--;
+		}
 
-int Max(int a, int b) {
-	if (a > b)
-		return a;
-	else
-		return b;
-}
-
-bool BoyerMooreSearch(const char* txt, const char* pat) {
-	int lengTxt = strlen(txt);
-	int lengPat = strlen(pat);
-	int badchar[256] = { -1, }; 
-	for (int i = 0; i < lengPat; i++)
-		badchar[(int)pat[i]] = i;
-	int s = 0, j; 
-	while (s < lengTxt - lengPat)
-	{
-		j = lengPat - 1;
-		while (j >= 0 && txt[s + j] == pat[j])
-			j--; 
-		if (j < 0) {
-			return true;
-		} else {
-			return false;
+		if (i > j) {
+			temp = jValue;
+			jValue = pivotValue;
+			pivotValue = temp;
+		}
+		else {
+			temp = iValue;
+			iValue = jValue;
+			jValue = temp;
 		}
 	}
 }
@@ -348,22 +297,14 @@ void searchTask(TASK projectTask[], int taskRowCnt) {
 		cout << left << setw(5) << "No." << setw(15) << "TASK명" << setw(15) << "시작일" << setw(15) << "마감일" << setw(10) << "진행률" << setw(10) << "완료일" << endl;
 		cout << "=======================================================================" << endl;
 
-		for (int i = 0; i < taskRowCnt - 1; i++) {
+		for (int i = 0; i < taskRowCnt; i++) {
 
 			if (searchNo != 4) {
 				switch (searchNo) {
-				case 1:
-					temp = projectTask[i].taskname;
-					break;
-				case 2:
-					temp = projectTask[i].startDate;
-					break;
-				case 3:
-					temp = projectTask[i].endDate;
-					break;
-				case 5:
-					temp = projectTask[i].finishDate;
-					break;
+					case 1: temp = projectTask[i].taskname; break;
+					case 2: temp = projectTask[i].startDate; break;
+					case 3: temp = projectTask[i].endDate; break;
+					case 5: temp = projectTask[i].finishDate; break;
 				}
 
 				if (temp == searchData)
@@ -395,4 +336,19 @@ void downloadTask() {
 	writeFile.open(route + "/new.txt");
 
 	cout << route + "\\/new.txt" << endl;
+}
+
+int parseDateString(string str) {
+	str.erase(remove(str.begin(), str.end(), '-'), str.end());
+	return stoi(str);
+}
+
+int currentDateTime() {
+	time_t curr_time;
+	struct tm* curr_tm;
+	curr_time = time(NULL);
+	curr_tm = localtime(&curr_time);
+
+	string today = to_string(curr_tm->tm_year) + to_string(curr_tm->tm_mon + 1) + to_string(curr_tm->tm_mday);
+	return stoll(today);
 }

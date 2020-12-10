@@ -24,3 +24,6 @@ void searchTask(TASK project[], int taskRowCnt);
 void downloadTask();
 
 void saveProject(string projectFileName, TASK* projectTask, int taskRowCnt);
+
+int parseDateString(string str);
+int currentDateTime();
