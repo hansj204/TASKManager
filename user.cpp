@@ -6,23 +6,50 @@
 #include "user.h"
 using namespace std;
 
+bool validationNewUSer(string newUserId) {
+	ifstream readFile;
+	readFile.open("user.txt");
+
+	if (readFile.is_open()) {
+		while (!readFile.eof()) {
+			char tmp[256];
+			readFile.getline(tmp, 256);
+
+			if (readFile.eof()) break;
+			if (newUserId.compare(strtok(tmp, "-")) == 0) {
+				cout << "\n이미 가입된 아이디입니다.\n" << endl;
+				return false;
+			}
+		}
+		readFile.close();
+	}
+
+	return true;
+}
+
 void newUser() {
 	string newUser, newUserId, newUserPw, newUserPos;
-	ofstream writeFile;
-	writeFile.open("user.txt", ios::app);
 	
-	cout << "아이디: ";
-	cin >> newUserId;
-	cout << "비밀번호: ";
-	cin >> newUserPw;
-	cout << "팀장은 tl, 팀원은 tp를 입력해주세요";
-	cin >> newUserPos;
+	while (true) {
+		cout << "아이디: ";
+		cin >> newUserId;
+		cout << "비밀번호: ";
+		cin >> newUserPw;
+		cout << "팀장은 tl, 팀원은 tp를 입력해주세요: ";
+		cin >> newUserPos;
 
-	newUser = newUserId + "-" + newUserPw + " " + newUserPos + "\n";
+		if (validationNewUSer(newUserId)) {
+			newUser = newUserId + "-" + newUserPw + " " + newUserPos + "\n";
 
-	writeFile.write(newUser.c_str(), newUser.size());
-	writeFile.close();
+			ofstream writeFile;
+			writeFile.open("user.txt", ios::app);
+			writeFile.write(newUser.c_str(), newUser.size());
+			writeFile.close();
+			break;
+		}
+	}
 }
+
 
 string checkUser(string user) {
 	ifstream readFile;

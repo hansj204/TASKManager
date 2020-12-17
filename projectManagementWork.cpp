@@ -41,7 +41,6 @@ string getProjectList(string userId, int workNum = 0) {
 			cout << j + 1 << "." << projectList[j] << endl;
 		}
 		cout << "------------------------------------------------------------" << endl;
-
 		cout << ">>";
 		cin >> selectProject;
 
@@ -63,8 +62,10 @@ void inviteTeamPlayer(string userId) {
 	strcpy(projectName, inviteProjectName.c_str());
 	projectName = strtok(projectName, ".");
 
-
+	cout << "------------------------------------------------------------" << endl;
 	cout << "1. 대기 참여자 수락\t2. 초대" << endl;
+	cout << "------------------------------------------------------------" << endl;
+	cout << ">>";
 	cin >> inviteType;
 
 	if (inviteType == 1) {
@@ -178,8 +179,6 @@ void insertProjectUser(char* projectName, string name) {
 
 	int findIndex = tempData.find_last_of("\n");
 	tempData = tempData.substr(1, tempData.size());
-
-	cout << tempData << endl;
 
 	ofstream writeFile;
 	writeFile.open("projectList.txt");

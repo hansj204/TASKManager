@@ -7,6 +7,7 @@ struct TASK{
 	string endDate;
 	int progress = 0;
 	string finishDate;
+	string manager;
 };
 
 void selectTaskList(string fileName);
@@ -15,13 +16,11 @@ void addTask(string projectFileName);
 
 void updateTask(string projectFileName, TASK project[], int taskRowCnt);
 
-void sortTask(TASK* arr, int left, int right, int selectWork, string selectKind);
-
-int binarySearch(TASK arr[], int l, int r, int searchNo, string searchData);
+void sortTask(string fileName, TASK projectTask[], int length);
 
 void searchTask(TASK project[], int taskRowCnt);
 
-void downloadTask();
+void downloadTask(string projectFileName);
 
 void saveProject(string projectFileName, TASK* projectTask, int taskRowCnt);
 

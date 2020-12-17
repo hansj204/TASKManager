@@ -4,3 +4,5 @@ wow-wow tp
 hi-hi tl
 hi-hi tp
 ykna-inznet tp
+we-we tp
+ho-ho tp
