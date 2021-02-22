@@ -15,18 +15,25 @@
 #include <experimental/filesystem>
 using namespace std;
 
+vector<string> projectInfo;
 void selectTaskList(string fileName) {
 
 	while (1) {
 		int totalProject = 0;
-		TASK *projectTask = new TASK[100];
-		int i = 0, taskCount = 0, selectProject;
+		TASK* projectTask = new TASK[100];
+
+		int i = 0, taskCount = 0, selectProject, projectInfoCnt = -1;
 		vector<double> planProgress;
-		
-		setlocale(LC_ALL, "ko-KR");
+
+		system("cls");
 
 		ifstream readFile;
+		readFile.imbue(locale(locale::empty(), new codecvt_utf8<wchar_t, 0x10ffff, std::consume_header>));
 		readFile.open(fileName);
+		projectInfo.clear();
+		projectInfo.push_back(fileName);
+
+		cout << "=========================================================================================" << endl;
 
 		if (readFile.is_open()) {
 
@@ -35,40 +42,45 @@ void selectTaskList(string fileName) {
 				i = 0;
 
 				readFile.getline(tmp, 256);
+
+				projectInfoCnt++;
+				if (projectInfoCnt < 4) {
+					if (projectInfoCnt == 1 || projectInfoCnt == 2) {
+						if (projectInfoCnt == 1) cout << "프로젝트 기간 : " << tmp << endl;
+						if (projectInfoCnt == 2) cout << "참여자 : " << tmp << endl;
+						projectInfo.push_back(tmp);
+					}
+					continue;
+				}
+
 				string orginData = tmp;
 
-				char* token = strtok(tmp, " ");
+				char* token = strtok(tmp, "||");
 
-				while (token != NULL){
+				while (token != NULL) {
 
 					switch (i) {
-						case 0:
-							projectTask[taskCount].taskname = token;
-							break;
-						case 1:
-							projectTask[taskCount].startDate = token;
-							break;
-						case 2:
-							projectTask[taskCount].endDate = token;
-							break;
-						case 3:
-							projectTask[taskCount].progress = atoi(token);
-							totalProject += atoi(token);
-							break;
-						case 4:
-							projectTask[taskCount].finishDate = token;
-							break;
-						case 5:
-							projectTask[taskCount].manager = token;
-							break;
+					case 0:
+						projectTask[taskCount].taskname = token;
+						break;
+					case 1:
+						projectTask[taskCount].startDate = token;
+						break;
+					case 2:
+						projectTask[taskCount].endDate = token;
+						break;
+					case 3:
+						projectTask[taskCount].progress = atoi(token);
+						totalProject += atoi(token);
+						break;
+					case 4:
+						projectTask[taskCount].finishDate = token;
+						break;
+					case 5:
+						projectTask[taskCount].manager = token;
+						break;
 					}
-					/*cout << currentDateTime() << endl;
-					int ing = currentDateTime() - parseDateString(projectTask[i].startDate);
-					int plan = parseDateString(projectTask[i].endDate) - parseDateString(projectTask[i].startDate);
-					cout << (ing / plan) * 100 << endl;
-					planProgress.push_back((ing/plan) * 100);
-					cout << planProgress.at(i) << endl;*/
-					token = strtok(NULL, " ");
+					token = strtok(NULL, "||");
 					i++;
 				}
 
@@ -77,22 +89,25 @@ void selectTaskList(string fileName) {
 
 			readFile.close();
 		}
-		system("cls");
-		double totalProgress = (totalProject == 0)? 0 : (totalProject / (double)(taskCount - 1));
 
-		cout << "================================================================================" << endl;
+		double totalProgress = (totalProject == 0) ? 0 : (totalProject / (taskCount - 1));
+
 		cout << "프로젝트 진행률 : " << totalProgress << "%" << endl;
 		//cout << "계획 대비 프로젝트 진행률 : " << totalProgress << "%" << endl;
-		cout << "================================================================================" << endl;
-		cout << left << setw(5) << "No." << setw(15) << "TASK명" << setw(15) << "시작일" << setw(15) << "마감일" << setw(10) << "진행률" << setw(10) << "완료일" << setw(10) << "담당자" << endl;
-		cout << "================================================================================" << endl;
+		cout << "=========================================================================================" << endl;
+		cout << "=========================================================================================" << endl;
+		cout << left << setw(5) << "No." << setw(15) << "TASK명" << setw(15) << "시작일" << setw(15) << "마감일" << setw(10) << "진행률" << setw(15) << "완료일" << setw(10) << "담당자" << endl;
+		cout << "=========================================================================================" << endl;
+
+		if (taskCount < 0) cout << "데이터가 없습니다." << endl;
+
 		for (int i = 0; i < taskCount - 1; i++) {
 			cout << left << setw(5) << i + 1 << setw(15) << projectTask[i].taskname << setw(15) << projectTask[i].startDate;
-			cout << setw(15) << projectTask[i].endDate << setw(10) << to_string(projectTask[i].progress) + "%" << setw(10) << projectTask[i].finishDate << setw(10) << projectTask[i].manager << endl;
+			cout << setw(15) << projectTask[i].endDate << setw(10) << to_string(projectTask[i].progress) + "%" << setw(15) << projectTask[i].finishDate << setw(10) << projectTask[i].manager << endl;
 		}
-		cout << "=======================================================================\n" << endl;
+		cout << "=========================================================================================\n" << endl;
 
-		int selectWork = NULL;
+		int selectWork;
 
 		cout << "===================================================================" << endl;
 		cout << "1.TASK 추가\t2.TASK 수정\t3.TASK 정렬\t4.검색\t5.다운로드" << endl;
@@ -107,23 +122,23 @@ void selectTaskList(string fileName) {
 		}
 
 		switch (selectWork) {
-			case 1:
-				addTask(fileName);
-				break;
-			case 2:
-				updateTask(fileName, projectTask, taskCount - 1);
-				break;
-			case 3:
-				sortTask(fileName, projectTask, taskCount- 1);
-				break;
-			case 4:
-				searchTask(projectTask, taskCount - 1);
-				break;
-			case 5: 
-				downloadTask(fileName);
-				break;
-			default:
-				break;
+		case 1:
+			addTask(fileName);
+			break;
+		case 2:
+			updateTask(fileName, projectTask, taskCount - 1);
+			break;
+		case 3:
+			sortTask(fileName, projectTask, taskCount - 1);
+			break;
+		case 4:
+			searchTask(projectTask, taskCount - 1);
+			break;
+		case 5:
+			downloadTask(fileName, projectTask, taskCount - 1);
+			break;
+		default:
+			break;
 		}
 
 	}
@@ -136,18 +151,22 @@ void addTask(string projectFileName) {
 	TASK task;
 
 	cout << "TASK 명을 입력하세요 : ";
-	cin >> task.taskname;
+	cin.ignore();
+	getline(cin, task.taskname);
 	cout << "TASK 시작일을 입력하세요(YYYY-DD-MM): ";
-	cin >> task.startDate;
+	cin.clear();
+	getline(cin, task.startDate);
 	cout << "TASK 마감일을 입력하세요(YYYY-DD-MM) : ";
-	cin >> task.endDate;
+	cin.clear();
+	getline(cin, task.endDate);
 	cout << "TASK 담당자를 입력하세요 : ";
-	cin >> task.manager;
+	cin.clear();
+	getline(cin, task.manager);
 
 	task.progress = 0;
 	task.finishDate = '-';
 
-	string addTaskInfo = task.taskname + " " + task.startDate + " " + task.endDate + " " + to_string(task.progress) + " " + task.finishDate + " " + task.manager + "\n";
+	string addTaskInfo = task.taskname + "||" + task.startDate + "||" + task.endDate + "||" + to_string(task.progress) + "||" + task.finishDate + "||" + task.manager + "\n";
 	writeFile.write(addTaskInfo.c_str(), addTaskInfo.size());
 	writeFile.close();
 }
@@ -169,17 +188,23 @@ void updateTask(string projectFileName, TASK project[], int taskRowCnt) {
 		cin >> selectNo;
 
 		cout << "\n\nTASK 명을 입력하세요(수정을 원치 않는 항목이면 .을 입력) : ";
-		cin >> task.taskname;
+		cin.ignore();
+		getline(cin, task.taskname);
 		cout << "TASK 시작일을 입력하세요(수정을 원치 않는 항목이면 .을 입력): ";
-		cin >> task.startDate;
+		cin.clear();
+		getline(cin, task.startDate);
 		cout << "TASK 마감일을 입력하세요(수정을 원치 않는 항목이면 .을 입력) : ";
-		cin >> task.endDate;
+		cin.clear();
+		getline(cin, task.endDate);
 		cout << "TASK 진행률을 입력하세요(수정을 원치 않는 항목이면 .을 입력) : ";
-		cin >> input;
+		cin.clear();
+		getline(cin, input);
 		cout << "TASK 완료일을 입력하세요(수정을 원치 않는 항목이면 .을 입력) : ";
-		cin >> task.finishDate;
+		cin.clear();
+		getline(cin, task.finishDate);
 		cout << "TASK 담당자를 입력하세요(수정을 원치 않는 항목이면 .을 입력) : ";
-		cin >> task.manager;
+		cin.clear();
+		getline(cin, task.manager);
 
 		if (task.taskname != ".") project[selectNo - 1].taskname = task.taskname;
 		if (task.startDate != ".") project[selectNo - 1].startDate = task.startDate;
@@ -187,7 +212,7 @@ void updateTask(string projectFileName, TASK project[], int taskRowCnt) {
 		if (input != ".") {
 			project[selectNo - 1].progress = stoi(input);
 			if (task.progress == 100) {
-				task.finishDate = "2020-12-12";
+				task.finishDate = currentDateTime();
 			}
 		}
 		if (task.finishDate != ".") project[selectNo - 1].finishDate = task.finishDate;
@@ -198,6 +223,10 @@ void updateTask(string projectFileName, TASK project[], int taskRowCnt) {
 		cin >> selectNo >> progress;
 
 		project[selectNo - 1].progress = progress;
+
+		if (project[selectNo - 1].progress == 100) {
+			project[selectNo - 1].finishDate = currentDateTime();
+		}
 	}
 
 	saveProject(projectFileName, project, taskRowCnt);
@@ -208,8 +237,13 @@ void saveProject(string projectFileName, TASK* project, int taskRowCnt) {
 	ofstream writeFile;
 	writeFile.open(projectFileName);
 
+	writeFile.write("==========================================\n", 43);
+	writeFile.write((projectInfo[1] + "\n").c_str(), (projectInfo[1] + "\n").size());
+	writeFile.write((projectInfo[2] + "\n").c_str(), (projectInfo[2] + "\n").size());
+	writeFile.write("==========================================\n", 43);
+
 	for (int i = 0; i < taskRowCnt; i++) {
-		string udpdateTaskInfo = project[i].taskname + " " + project[i].startDate + " " + project[i].endDate + " " + to_string(project[i].progress) + " " + project[i].finishDate + " " + project[i].manager + "\n";
+		string udpdateTaskInfo = project[i].taskname + "||" + project[i].startDate + "||" + project[i].endDate + "||" + to_string(project[i].progress) + "||" + project[i].finishDate + "||" + project[i].manager + "\n";
 		writeFile.write(udpdateTaskInfo.c_str(), udpdateTaskInfo.size());
 	}
 
@@ -270,17 +304,17 @@ void searchTask(TASK projectTask[], int taskRowCnt) {
 
 	while (true) {
 		
-		cout << "===================================================================================" << endl;
+		cout << "=========================================================================================" << endl;
 		cout << "1.TASK명\t2.시작일\t 3.마감일\t4.진행률\t5.완료일\t6.담당자" << endl;
-		cout << "===================================================================================" << endl;
+		cout << "=========================================================================================" << endl;
 		cout << "검색할 항목의 No와 검색어를 입력하세요 : ";
 		cin >> searchNo >> searchData;
 
 		system("cls");
 
-		cout << "=======================================================================================" << endl;
-		cout << left << setw(5) << "No." << setw(15) << "TASK명" << setw(15) << "시작일" << setw(15) << "마감일" << setw(10) << "진행률" << setw(10) << "완료일" << setw(10) << "담당자" << endl;
-		cout << "=======================================================================================" << endl;
+		cout << "=============================================================================================" << endl;
+		cout << left << setw(5) << "No." << setw(15) << "TASK명" << setw(15) << "시작일" << setw(15) << "마감일" << setw(10) << "진행률" << setw(15) << "완료일" << setw(10) << "담당자" << endl;
+		cout << "=============================================================================================" << endl;
 
 		for (int i = 0; i < taskRowCnt; i++) {
 
@@ -295,19 +329,19 @@ void searchTask(TASK projectTask[], int taskRowCnt) {
 
 				if (temp == searchData) {
 					cout << left << setw(5) << i + 1 << setw(15) << projectTask[i].taskname << setw(15) << projectTask[i].startDate;
-					cout << setw(15) << projectTask[i].endDate << setw(10) << to_string(projectTask[i].progress) + "%" << setw(10) << projectTask[i].finishDate << setw(10) << projectTask[i].manager << endl;
+					cout << setw(15) << projectTask[i].endDate << setw(10) << to_string(projectTask[i].progress) + "%" << setw(15) << projectTask[i].finishDate << setw(10) << projectTask[i].manager << endl;
 				}
 
 			}
 			else {
 				if (temp == searchData) {
 					cout << left << setw(5) << i + 1 << setw(15) << projectTask[i].taskname << setw(15) << projectTask[i].startDate;
-					cout << setw(15) << projectTask[i].endDate << setw(10) << to_string(projectTask[i].progress) + "%" << setw(10) << projectTask[i].finishDate << setw(10) << projectTask[i].manager << endl;
+					cout << setw(15) << projectTask[i].endDate << setw(10) << to_string(projectTask[i].progress) + "%" << setw(15) << projectTask[i].finishDate << setw(10) << projectTask[i].manager << endl;
 				}
 			}
 		}
 			
-		cout << "=======================================================================================" << endl;
+		cout << "=============================================================================================" << endl;
 
 		cout << "검색한 목록 조회를 종료를 원하면 아무 키를 입력해주세요 >> ";
 		cin >> goStop;
@@ -317,16 +351,14 @@ void searchTask(TASK projectTask[], int taskRowCnt) {
 
 namespace fs = std::experimental::filesystem::v1;
 
-void downloadTask(string fileName) {
-
+void downloadTask(string fileName, TASK projectTask[], int taskRowCnt) {
 	string route;
 
 	cout << "다운로드 받을 경로를 입력하세요 ex) C:\\Download : ";
 	cin >> route;
-	route = route + "\\" + to_string(currentDateTime()) + "_TaskList.txt";
+	route = route + "\\" + currentDateTime() + "_taskList.html";
 
-	
-	fs::copy(fileName, route);
+	parseHTMLTable(route, projectInfo, projectTask, taskRowCnt);
 }
 
 int parseDateString(string str) {
@@ -334,12 +366,14 @@ int parseDateString(string str) {
 	return stoi(str);
 }
 
-int currentDateTime() {
+string timeFormat(int time) {
+	return (time < 10) ? "0" + to_string(time) : to_string(time);
+}
+
+string currentDateTime() {
 	time_t curr_time;
 	struct tm* curr_tm;
 	curr_time = time(NULL);
 	curr_tm = localtime(&curr_time);
-
-	string today = to_string(curr_tm->tm_year) + to_string(curr_tm->tm_mon + 1) + to_string(curr_tm->tm_mday);
-	return stoll(today);
+	return to_string(curr_tm->tm_year + 1900) + "-" + timeFormat(curr_tm->tm_mon + 1) + "-" + timeFormat(curr_tm->tm_mday);
 }

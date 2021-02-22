@@ -1,5 +1,10 @@
 #include <string>
+#include <vector>
 using namespace std;
+
+enum class TASKCommonColumn {
+	taskname, startDate, endDate, finishDate, progress=0, manager
+};
 
 struct TASK{
 	string taskname;
@@ -20,9 +25,12 @@ void sortTask(string fileName, TASK projectTask[], int length);
 
 void searchTask(TASK project[], int taskRowCnt);
 
-void downloadTask(string projectFileName);
+void downloadTask(string fileName, TASK projectTask[], int taskRowCnt);
 
 void saveProject(string projectFileName, TASK* projectTask, int taskRowCnt);
 
 int parseDateString(string str);
-int currentDateTime();
+
+void parseHTMLTable(string fileName, vector<string> taskInfo, TASK bodyData[], int taskCount);
+
+string currentDateTime();

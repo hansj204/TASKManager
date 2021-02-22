@@ -124,6 +124,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="parseHTMLTable.cpp" />
     <ClCompile Include="projectManagementWork.cpp" />
     <ClCompile Include="taskManagementWork.cpp" />
     <ClCompile Include="user.cpp" />

@@ -11,4 +11,6 @@ void applyProjectParticipation (string userId);
 
 void createNewProject(string userId);
 
+void deleteProject(string userId);
+
 void insertProjectUser(char* projectName, string name);
